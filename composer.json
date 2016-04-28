@@ -1,0 +1,22 @@
+{
+    "name": "voronkovich/sberbank-acquiring-client",
+    "type": "library",
+    "description": "Client for working with Sberbank's acquiring REST API",
+    "keywords": ["sberbank", "acquiring", "credit card", "client"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oleg Voronkovich",
+            "email": "oleg-voronkovich@yandex.ru"
+        }
+    ],
+    "require": {
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Voronkovich\\SberbankAcquiring\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

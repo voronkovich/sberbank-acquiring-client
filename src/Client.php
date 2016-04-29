@@ -144,7 +144,7 @@ class Client
         } elseif (isset($response['ErrorCode'])) {
             $errorCode = $response['ErrorCode'];
         } else {
-            throw new ActionException('Malformed response: field with error code not found.');
+            return;
         }
 
         if ('0' === $errorCode) {

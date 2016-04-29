@@ -18,6 +18,13 @@ class Client
     private $userName = '';
     private $password = '';
 
+    /**
+     * Language code in ISO 639-1 format.
+     *
+     * @var string
+     */
+    private $language = 'en';
+
     private $apiUri = 'https://3dsec.sberbank.ru/payment/rest/';
     private $httpMethod = 'POST';
 
@@ -43,6 +50,10 @@ class Client
             $this->password = $settings['password'];
         } else {
             throw new \LogicException('Password is required.');
+        }
+
+        if (isset($settings['language'])) {
+            $this->language = $settings['language'];
         }
 
         if (isset($settings['apiUri'])) {
@@ -83,6 +94,7 @@ class Client
 
         $data['userName'] = $this->userName;
         $data['password'] = $this->password;
+        $data['language'] = $this->language;
 
         $headers = array(
             'Content-type: application/x-www-form-urlencoded',

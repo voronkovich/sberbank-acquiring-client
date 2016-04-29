@@ -127,17 +127,25 @@ class Client
      */
     private function handleResponseError(array $response)
     {
-        if (!isset($response['errorCode'])) {
-            throw new ActionException('Malformed response: "errorCode" field not found.');
+        if (isset($response['errorCode'])) {
+            $errorCode = $response['errorCode'];
+        } elseif (isset($response['ErrorCode'])) {
+            $errorCode = $response['ErrorCode'];
+        } else {
+            throw new ActionException('Malformed response: field with error code not found.');
         }
-
-        $errorCode = $response['errorCode'];
 
         if ('0' === $errorCode) {
             return;
         }
 
-        $errorMessage = isset($response['errorMessage']) ? $response['errorMessage'] : 'Unknown error.';
+        if (isset($response['errorMessage'])) {
+            $errorMessage = $response['errorMessage'];
+        } elseif (isset($response['ErrorMessage'])) {
+            $errorMessage = $response['ErrorMessage'];
+        } else {
+            $errorMessage = 'Unknown error.';
+        }
 
         throw new ActionException($errorMessage, $errorCode);
     }

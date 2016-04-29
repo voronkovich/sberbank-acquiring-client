@@ -23,4 +23,6 @@ $result = $client->execute('register.do', [
     'amount'      => 60000,
     'returnUrl'   => 'http://mycoolshop.dev/fail',
 ]);
+
+list($orderId, $formUrl) = $result;
 ```

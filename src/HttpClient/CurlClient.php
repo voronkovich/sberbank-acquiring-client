@@ -45,7 +45,7 @@ class CurlClient implements HttpClientInterface
             $curlOptions[\CURLOPT_URL] = $uri;
             $curlOptions[\CURLOPT_POSTFIELDS] = $data;
         } else {
-            throw new \LogicException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $method));
+            throw new \InvalidArgumentException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $method));
         }
 
         $curlOptions[\CURLOPT_HTTPHEADER] = $headers;
@@ -60,7 +60,7 @@ class CurlClient implements HttpClientInterface
             $error = curl_error($curl);
             $errorCode = curl_errno($curl);
 
-            throw new NetworkException('Curl error: ' . $error);
+            throw new NetworkException('Curl error: ' . $error, $errorCode);
         }
 
         return $response;

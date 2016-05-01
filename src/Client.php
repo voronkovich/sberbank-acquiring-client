@@ -78,6 +78,25 @@ class Client
     }
 
     /**
+     * Register a new order.
+     *
+     * @param int|string $orderNumber An order identifier
+     * @param int        $amount      An order amount
+     * @param string     $returnUrl   An url for redirecting a user after successfull order handling
+     * @param array      $data        Additional data
+     *
+     * @return array A server's response
+     */
+    public function registerOrder($orderNumber, $amount, $returnUrl, array $data = array())
+    {
+        $data['orderNumber'] = $orderNumber;
+        $data['amount']      = $amount;
+        $data['returnUrl']   = $returnUrl;
+
+        return $this->action('register.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'

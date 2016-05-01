@@ -10,58 +10,85 @@ namespace Voronkovich\SberbankAcquiring;
 class OrderStatus
 {
     // An order was successfully registered, but is'nt paid yet
-    const REGISTERED = 0;
+    const CREATED = 0;
 
     // An order's amount was successfully holded (for two-stage payments only)
     const APPROVED = 1;
 
-    // An order was authorized successfully
-    const AUTHORIZED = 2;
+    // An order was deposited
+    const DEPOSITED = 2;
 
-    // An order authorization was reversed
-    const AUTHORIZATION_REVERSED = 3;
+    // An order was reversed
+    const REVERSED = 3;
 
     // An order authorization was initialized by card emitter's ACS
     const AUTHORIZATION_INITIALIZED = 5;
 
-    // An authorization was rejected
-    const AUTHORIZATION_REJECTED = 6;
+    // An order was declined
+    const DECLINED = 6;
 
     // An order was refunded
     const REFUNDED = 4;
 
-    public static function isRegistered($orderStatus)
+    public static function isCreated($status)
     {
-        return self::REGISTERED == $orderStatus;
+        // (int) '' === 0
+        return '' !== $status && self::CREATED === (int) $status;
     }
 
-    public static function isApproved($orderStatus)
+    public static function isApproved($status)
     {
-        return self::APPROVED == $orderStatus;
+        return self::APPROVED === (int) $status;
     }
 
-    public static function isAuthorized($orderStatus)
+    public static function isDeposited($status)
     {
-        return self::AUTHORIZED == $orderStatus;
+        return self::DEPOSITED === (int) $status;
     }
 
-    public static function isAuthorizationReversed($orderStatus)
+    public static function isReversed($status)
     {
-        return self::AUTHORIZATION_REVERSED == $orderStatus;
+        return self::REVERSED === (int) $status;
     }
 
-    public static function isAuthorizationInitialized($orderStatus)
+    public static function isAuthorizationInitialized($status)
     {
-        return self::AUTHORIZATION_INITIALIZED == $orderStatus;
+        return self::AUTHORIZATION_INITIALIZED === (int) $status;
     }
 
-    public static function isAuthorizationRejected($orderStatus)
+    public static function isDeclined($status)
     {
-        return self::AUTHORIZATION_REJECTED == $orderStatus;
+        return self::DECLINED === (int) $status;
     }
 
-    public static function isRefunded($orderStatus)
+    public static function isRefunded($status)
     {
-        return self::REFUNDED == $orderStatus;
+        return self::REFUNDED === (int) $status;
+    }
+
+    public static function statusToString($status)
+    {
+        switch ((int) $status) {
+            case self::CREATED:
+                return 'CREATED';
+                break;
+            case self::APPROVED:
+                return 'APPROVED';
+                break;
+            case self::DEPOSITED:
+                return 'DEPOSITED';
+                break;
+            case self::REVERSED:
+                return 'REVERSED';
+                break;
+            case self::DECLINED:
+                return 'DECLINED';
+                break;
+            case self::REFUNDED:
+                return 'REFUNDED';
+                break;
+        }
+
+        return '';
     }
 }

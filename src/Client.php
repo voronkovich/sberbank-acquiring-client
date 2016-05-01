@@ -159,6 +159,21 @@ class Client
     }
 
     /**
+     * Verify card enrollment in the 3DS.
+     *
+     * @param string $pan  A primary account number
+     * @param array  $data Additional data
+     *
+     * @return array A server's response
+     */
+    public function verifyEnrollment($pan, array $data = array())
+    {
+        $data['pan'] = $pan;
+
+        return $this->execute('verifyEnrollment.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'

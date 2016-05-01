@@ -45,7 +45,7 @@ class CurlClient implements HttpClientInterface
             $curlOptions[\CURLOPT_URL] = $uri;
             $curlOptions[\CURLOPT_POSTFIELDS] = $data;
         } else {
-            throw new \LogicException(sprintf('Method "%s" is not supportes.'));
+            throw new \LogicException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $method));
         }
 
         $curlOptions[\CURLOPT_HTTPHEADER] = $headers;

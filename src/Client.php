@@ -100,10 +100,11 @@ class Client
      * Reverse an existing order.
      *
      * @param string $orderId An order identifier
+     * @param array  $data    Additional data
      *
      * @return array A server's response
      */
-    public function reverseOrder($orderId)
+    public function reverseOrder($orderId, array $data = array())
     {
         $data['orderId'] = $orderId;
 
@@ -115,10 +116,11 @@ class Client
      *
      * @param string $orderId An order identifier
      * @param int    $amount  An amount to refund
+     * @param array  $data    Additional data
      *
      * @return array A server's response
      */
-    public function refundOrder($orderId, $amount)
+    public function refundOrder($orderId, $amount, array $data = array())
     {
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
@@ -130,10 +132,11 @@ class Client
      * Get an existing order's status.
      *
      * @param string $orderId An order identifier
+     * @param array  $data    Additional data
      *
      * @return array A server's response
      */
-    public function getOrderStatus($orderId)
+    public function getOrderStatus($orderId, array $data = array())
     {
         $data['orderId'] = $orderId;
 
@@ -144,10 +147,11 @@ class Client
      * Get an existing order's extended status.
      *
      * @param string $orderId An order identifier
+     * @param array  $data    Additional data
      *
      * @return array A server's response
      */
-    public function getOrderStatusExtended($orderId)
+    public function getOrderStatusExtended($orderId, array $data = array())
     {
         $data['orderId'] = $orderId;
 

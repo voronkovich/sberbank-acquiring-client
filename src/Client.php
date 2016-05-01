@@ -62,7 +62,7 @@ class Client
 
         if (isset($settings['httpMethod'])) {
             if ('GET' !== $settings['httpMethod'] && 'POST' !== $settings['httpMethod']) {
-                throw new \UnexpectedValueException('An HTTP method must be "GET" or "POST".');
+                throw new \UnexpectedValueException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $settings['httpMethod']));
             }
 
             $this->httpMethod = $settings['httpMethod'];

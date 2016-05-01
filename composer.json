@@ -3,6 +3,7 @@
     "type": "library",
     "description": "Client for working with Sberbank's acquiring REST API",
     "keywords": ["sberbank", "acquiring", "credit card", "client"],
+    "homepage": "https://github.com/voronkovich/sberbank-acquiring-client",
     "license": "MIT",
     "authors": [
         {

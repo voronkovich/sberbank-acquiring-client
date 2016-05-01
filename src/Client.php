@@ -127,6 +127,34 @@ class Client
     }
 
     /**
+     * Get an existing order's status.
+     *
+     * @param string $orderId An order identifier
+     *
+     * @return array A server's response
+     */
+    public function getOrderStatus($orderId)
+    {
+        $data['orderId'] = $orderId;
+
+        return $this->execute('getOrderStatus.do', $data);
+    }
+
+    /**
+     * Get an existing order's extended status.
+     *
+     * @param string $orderId An order identifier
+     *
+     * @return array A server's response
+     */
+    public function getOrderStatusExtended($orderId)
+    {
+        $data['orderId'] = $orderId;
+
+        return $this->execute('getOrderStatusExtended.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'

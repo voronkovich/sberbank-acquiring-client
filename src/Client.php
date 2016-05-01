@@ -100,6 +100,10 @@ class Client
         $data['password'] = $this->password;
         $data['language'] = $this->language;
 
+        if (isset($data['jsonParams'])) {
+            $data['jsonParams'] = json_encode($data['jsonParams']);
+        }
+
         $httpClient = $this->getHttpClient();
 
         $response = $httpClient->request($uri, $this->httpMethod, $headers, $data);

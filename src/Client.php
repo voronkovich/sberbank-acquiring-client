@@ -100,15 +100,30 @@ class Client
      * Reverse an existing order.
      *
      * @param string $orderId An order identifier
-     * @param array  $data    Additional data
      *
      * @return array A server's response
      */
-    public function reverseOrder($orderId, array $data = array())
+    public function reverseOrder($orderId)
     {
         $data['orderId'] = $orderId;
 
         return $this->execute('reverse.do', $data);
+    }
+
+    /**
+     * Refund an existing order.
+     *
+     * @param string $orderId An order identifier
+     * @param int    $amount  An amount to refund
+     *
+     * @return array A server's response
+     */
+    public function refundOrder($orderId, $amount)
+    {
+        $data['orderId'] = $orderId;
+        $data['amount']  = $amount;
+
+        return $this->execute('refund.do', $data);
     }
 
     /**

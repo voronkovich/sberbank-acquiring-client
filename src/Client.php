@@ -93,7 +93,22 @@ class Client
         $data['amount']      = $amount;
         $data['returnUrl']   = $returnUrl;
 
-        return $this->action('register.do', $data);
+        return $this->execute('register.do', $data);
+    }
+
+    /**
+     * Reverse an existing order.
+     *
+     * @param string $orderId An order identifier
+     * @param array  $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function reverseOrder($orderId, array $data = array())
+    {
+        $data['orderId'] = $orderId;
+
+        return $this->execute('reverse.do', $data);
     }
 
     /**

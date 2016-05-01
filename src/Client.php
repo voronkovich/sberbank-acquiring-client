@@ -92,15 +92,13 @@ class Client
     {
         $uri = $this->apiUri . $action;
 
+        $headers = array(
+            'Cache-Control: no-cache',
+        );
+
         $data['userName'] = $this->userName;
         $data['password'] = $this->password;
         $data['language'] = $this->language;
-
-        $headers = array(
-            'Content-type: application/x-www-form-urlencoded',
-            'Cache-Control: no-cache',
-            'charset="utf-8"',
-        );
 
         $httpClient = $this->getHttpClient();
 

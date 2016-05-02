@@ -198,7 +198,7 @@ class Client
         }
 
         if ($from >= $to) {
-            throw new \UnexpectedValueException('A "from" parameter must be less than "to" parameter.');
+            throw new \InvalidArgumentException('A "from" parameter must be less than "to" parameter.');
         }
 
         $allowedStatuses = array(
@@ -212,13 +212,13 @@ class Client
 
         if (isset($data['transactionStates'])) {
             if (!is_array($data['transactionStates'])) {
-                throw new \UnexpectedValueException('A "transactionStates" parameter must be an array.');
+                throw new \InvalidArgumentException('A "transactionStates" parameter must be an array.');
             }
 
             if (empty($data['transactionStates'])) {
-                throw new \UnexpectedValueException('A "transactionStates" parameter can\'t be empty.');
+                throw new \InvalidArgumentException('A "transactionStates" parameter cannot be empty.');
             } elseif (!empty(array_diff($data['transactionStates'], $allowedStatuses))) {
-                throw new \UnexpectedValueException('A "transactionStates" parameter contains not allowed values.');
+                throw new \DomainException('A "transactionStates" parameter contains not allowed values.');
             }
         } else {
             $data['transactionStates'] = $allowedStatuses;
@@ -228,10 +228,10 @@ class Client
 
         if (isset($data['merchants'])) {
             if (!is_array($data['merchants'])) {
-                throw new \UnexpectedValueException('A "merchants" parameter must be an array.');
+                throw new \InvalidArgumentException('A "merchants" parameter must be an array.');
             }
         } else {
-            $data["merchants"] = array();
+            $data['merchants'] = array();
         }
 
         $data['from']              = $from->format($this->dateFormat);

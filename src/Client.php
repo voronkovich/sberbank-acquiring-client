@@ -46,13 +46,13 @@ class Client
         if (isset($settings['userName'])) {
             $this->userName = $settings['userName'];
         } else {
-            throw new \LogicException('UserName is required.');
+            throw new \InvalidArgumentException('UserName is required.');
         }
 
         if (isset($settings['password'])) {
             $this->password = $settings['password'];
         } else {
-            throw new \LogicException('Password is required.');
+            throw new \InvalidArgumentException('Password is required.');
         }
 
         if (isset($settings['language'])) {
@@ -65,7 +65,7 @@ class Client
 
         if (isset($settings['httpMethod'])) {
             if ('GET' !== $settings['httpMethod'] && 'POST' !== $settings['httpMethod']) {
-                throw new \UnexpectedValueException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $settings['httpMethod']));
+                throw new \DomainException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $settings['httpMethod']));
             }
 
             $this->httpMethod = $settings['httpMethod'];
@@ -73,7 +73,7 @@ class Client
 
         if (isset($settings['httpClient'])) {
             if (!$settings instanceof HttpClientInterface) {
-                throw new \UnexpectedValueException('An HTTP client must implement HttpClientInterface.');
+                throw new \InvalidArgumentException('An HTTP client must implement HttpClientInterface.');
             }
 
             $this->httpClient = $settings['httpClient'];

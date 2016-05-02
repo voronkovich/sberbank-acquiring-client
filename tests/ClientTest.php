@@ -7,7 +7,7 @@ use Voronkovich\SberbankAcquiring\Client;
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \LogicException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage UserName is required.
      */
     public function test_constructor_userNameIsNotSpecified()
@@ -16,7 +16,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Password is required.
      */
     public function test_constructor_passwordIsNotSpecified()
@@ -25,7 +25,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
+     * @expectedException \DomainException
      */
     public function test_constructor_invalidHttpMethod()
     {
@@ -33,7 +33,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
+     * @expectedException \InvalidArgumentException
      */
     public function test_constructor_invalidHttpClient()
     {

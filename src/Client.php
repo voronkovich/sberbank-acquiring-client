@@ -3,8 +3,9 @@
 namespace Voronkovich\SberbankAcquiring;
 
 use Voronkovich\SberbankAcquiring\Exception\ActionException;
-use Voronkovich\SberbankAcquiring\Exception\ResponseParsingException;
+use Voronkovich\SberbankAcquiring\Exception\BadResponseException;
 use Voronkovich\SberbankAcquiring\Exception\NetworkException;
+use Voronkovich\SberbankAcquiring\Exception\ResponseParsingException;
 use Voronkovich\SberbankAcquiring\HttpClient\CurlClient;
 use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
 use Voronkovich\SberbankAcquiring\OrderStatus;
@@ -270,7 +271,14 @@ class Client
 
         $httpClient = $this->getHttpClient();
 
-        $response = $httpClient->request($uri, $this->httpMethod, $headers, $data);
+        list($response, $httpCode) = $httpClient->request($uri, $this->httpMethod, $headers, $data);
+
+        if (200 !== $httpCode) {
+            $badResponseException = new BadResponseException(sprintf('Bad HTTP code: %d.', $httpCode), $httpCode);
+            $badResponseException->setResponse($response);
+
+            throw $badResponseException;
+        }
 
         $response = $this->parseResponse($response);
         $response = $this->normalizeResponse($response);

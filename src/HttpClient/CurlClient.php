@@ -63,7 +63,9 @@ class CurlClient implements HttpClientInterface
             throw new NetworkException('Curl error: ' . $error, $errorCode);
         }
 
-        return $response;
+        $httpCode = curl_getinfo($this->curl, \CURLINFO_HTTP_CODE);
+
+        return array($response, $httpCode);
     }
 
     public function __destruct()

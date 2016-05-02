@@ -16,19 +16,20 @@ class OrderStatus
     const APPROVED = 1;
 
     // An order was deposited
+    // If you want to check whether payment was successfully paid - use this constant
     const DEPOSITED = 2;
 
     // An order was reversed
     const REVERSED = 3;
+
+    // An order was refunded
+    const REFUNDED = 4;
 
     // An order authorization was initialized by card emitter's ACS
     const AUTHORIZATION_INITIALIZED = 5;
 
     // An order was declined
     const DECLINED = 6;
-
-    // An order was refunded
-    const REFUNDED = 4;
 
     public static function isCreated($status)
     {
@@ -51,6 +52,11 @@ class OrderStatus
         return self::REVERSED === (int) $status;
     }
 
+    public static function isRefunded($status)
+    {
+        return self::REFUNDED === (int) $status;
+    }
+
     public static function isAuthorizationInitialized($status)
     {
         return self::AUTHORIZATION_INITIALIZED === (int) $status;
@@ -59,11 +65,6 @@ class OrderStatus
     public static function isDeclined($status)
     {
         return self::DECLINED === (int) $status;
-    }
-
-    public static function isRefunded($status)
-    {
-        return self::REFUNDED === (int) $status;
     }
 
     public static function statusToString($status)

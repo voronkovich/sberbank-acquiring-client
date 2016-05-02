@@ -44,6 +44,40 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
 
-        $this->assertInstanceOf('Voronkovich\SberbankAcquiring\Client', $client);
+        $this->assertInstanceOf('\Voronkovich\SberbankAcquiring\Client', $client);
+    }
+
+    /**
+     * @expectedException \Voronkovich\SberbankAcquiring\Exception\BadResponseException
+     */
+    public function test_execute_badResponse()
+    {
+        $httpClient = $this->mockHttpClient(array('Internal server error.', 500));
+
+        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
+        $this->setHttpClient($client, $httpClient);
+
+        $client->execute('testAction');
+    }
+
+    private function setHttpClient($client, $httpClient)
+    {
+        $reflection = new \ReflectionClass($client);
+        $property = $reflection->getProperty('httpClient');
+        $property->setAccessible(true);
+        $property->setValue($client, $httpClient);
+    }
+
+    private function mockHttpClient(array $response)
+    {
+        $response[0] = json_encode($response[0]);
+
+        $httpClient = $this->getMock('\Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface');
+
+        $httpClient
+            ->method('request')
+            ->willReturn($response);
+
+        return $httpClient;
     }
 }

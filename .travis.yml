@@ -16,6 +16,7 @@ matrix:
         - php: hhvm
     allow_failures:
         - php: hhvm
+        - php: 5.3
 
 before_install:
     - composer self-update
@@ -24,4 +25,4 @@ install:
     - composer install
 
 script:
-    - vendor/bin/phpunit -c tests
+    - vendor/bin/phpunit tests

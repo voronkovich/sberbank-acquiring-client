@@ -367,5 +367,4 @@ class Client
 
         return $this->httpClient;
     }
-
 }

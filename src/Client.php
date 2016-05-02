@@ -6,6 +6,7 @@ use Voronkovich\SberbankAcquiring\Exception\ActionException;
 use Voronkovich\SberbankAcquiring\Exception\NetworkException;
 use Voronkovich\SberbankAcquiring\HttpClient\CurlClient;
 use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
+use Voronkovich\SberbankAcquiring\OrderStatus;
 
 /**
  * Client for working with Sberbanks's aquiring REST API.
@@ -27,6 +28,8 @@ class Client
 
     private $apiUri = 'https://3dsec.sberbank.ru/payment/rest/';
     private $httpMethod = 'POST';
+
+    private $dateFormat = 'YmdHis';
 
     /**
      * @var HttpClientInterface
@@ -174,6 +177,68 @@ class Client
     }
 
     /**
+     * Get last orders for merchants.
+     *
+     * @param \DateTime      $from A begining date of a period
+     * @param \DateTime|null $to   An ending date of a period
+     * @param array          $data Additional data
+     *
+     * @thows \UnexpectedValueException
+     *
+     * @return array A server's response
+     */
+    public function getLastOrdersForMerchants(\DateTime $from, \DateTime $to = null, array $data = array())
+    {
+        if (null === $to) {
+            $to = new \DateTime();
+        }
+
+        if ($from >= $to) {
+            throw new \UnexpectedValueException('A "from" parameter must be less than "to" parameter.');
+        }
+
+        $allowedStatuses = array(
+            OrderStatus::CREATED,
+            OrderStatus::APPROVED,
+            OrderStatus::DEPOSITED,
+            OrderStatus::REVERSED,
+            OrderStatus::DECLINED,
+            OrderStatus::REFUNDED,
+        );
+
+        if (isset($data['transactionStates'])) {
+            if (!is_array($data['transactionStates'])) {
+                throw new \UnexpectedValueException('A "transactionStates" parameter must be an array.');
+            }
+
+            if (empty($data['transactionStates'])) {
+                throw new \UnexpectedValueException('A "transactionStates" parameter can\'t be empty.');
+            } elseif (!empty(array_diff($data['transactionStates'], $allowedStatuses))) {
+                throw new \UnexpectedValueException('A "transactionStates" parameter contains not allowed values.');
+            }
+        } else {
+            $data['transactionStates'] = $allowedStatuses;
+        }
+
+        $data['transactionStates'] = array_map('Voronkovich\SberbankAcquiring\OrderStatus::statusToString', $data['transactionStates']);
+
+        if (isset($data['merchants'])) {
+            if (!is_array($data['merchants'])) {
+                throw new \UnexpectedValueException('A "merchants" parameter must be an array.');
+            }
+        } else {
+            $data["merchants"] = array();
+        }
+
+        $data['from']              = $from->format($this->dateFormat);
+        $data['to']                = $to->format($this->dateFormat);
+        $data['transactionStates'] = implode(array_unique($data['transactionStates']), ',');
+        $data['merchants']         = implode(array_unique($data['merchants']), ',');
+
+        return $this->execute('getLastOrdersForMerchants.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'
@@ -204,6 +269,10 @@ class Client
 
         $response = $httpClient->request($uri, $this->httpMethod, $headers, $data);
         $response = json_decode($response, true);
+
+        if (null === $response) {
+            throw new ActionException('Malformed response.');
+        }
 
         $this->handleResponseError($response);
 
@@ -238,14 +307,14 @@ class Client
     private function handleResponseError(array $response)
     {
         if (isset($response['errorCode'])) {
-            $errorCode = $response['errorCode'];
+            $errorCode = (int) $response['errorCode'];
         } elseif (isset($response['ErrorCode'])) {
-            $errorCode = $response['ErrorCode'];
+            $errorCode = (int) $response['ErrorCode'];
         } else {
             return;
         }
 
-        if ('0' === $errorCode) {
+        if (0 === $errorCode) {
             return;
         }
 

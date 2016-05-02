@@ -17,6 +17,7 @@ matrix:
     allow_failures:
         - php: hhvm
         - php: 5.3
+        - php: 5.4
 
 before_install:
     - composer self-update

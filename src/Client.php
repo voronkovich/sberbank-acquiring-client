@@ -3,6 +3,7 @@
 namespace Voronkovich\SberbankAcquiring;
 
 use Voronkovich\SberbankAcquiring\Exception\ActionException;
+use Voronkovich\SberbankAcquiring\Exception\ResponseParsingException;
 use Voronkovich\SberbankAcquiring\Exception\NetworkException;
 use Voronkovich\SberbankAcquiring\HttpClient\CurlClient;
 use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
@@ -16,6 +17,8 @@ use Voronkovich\SberbankAcquiring\OrderStatus;
  */
 class Client
 {
+    const ACTION_SUCCESS = 0;
+
     private $userName = '';
     private $password = '';
 
@@ -268,13 +271,73 @@ class Client
         $httpClient = $this->getHttpClient();
 
         $response = $httpClient->request($uri, $this->httpMethod, $headers, $data);
-        $response = json_decode($response, true);
 
-        if (null === $response) {
-            throw new ActionException('Malformed response.');
+        $response = $this->parseResponse($response);
+        $response = $this->normalizeResponse($response);
+
+        if (self::ACTION_SUCCESS !== $response['errorCode']) {
+            throw new ActionException($response['errorMessage'], $response['errorCode']);
         }
 
-        $this->handleResponseError($response);
+        return $response;
+    }
+
+    /**
+     * Parse a servers's response.
+     *
+     * @param string $response A string in the JSON format
+     *
+     * @throws ResponseParsingException
+     *
+     * @return array
+     */
+    private function parseResponse($response)
+    {
+        $response  = json_decode($response, true);
+        $errorCode = json_last_error();
+
+        if (\JSON_ERROR_NONE !== $errorCode || null === $response) {
+            $errorMessage = function_exists('json_last_error_msg') ? json_last_error_msg() : 'JSON parsing error.';
+
+            throw new ResponseParsingException($errorMessage, $errorCode);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Normalize server's response.
+     *
+     * Server's response can contain an error code and an error message in differend fields.
+     * This method handles those situations and normalizes the response.
+     *
+     * @param array $response A response
+     *
+     * @return array A normalized response
+     */
+    private function normalizeResponse(array $response)
+    {
+        if (isset($response['errorCode'])) {
+            $errorCode = (int) $response['errorCode'];
+        } elseif (isset($response['ErrorCode'])) {
+            $errorCode = (int) $response['ErrorCode'];
+        } else {
+            $errorCode = self::ACTION_SUCCESS;
+        }
+
+        unset($response['ErrorCode']);
+        $response['errorCode'] = $errorCode;
+
+        if (isset($response['errorMessage'])) {
+            $errorMessage = $response['errorMessage'];
+        } elseif (isset($response['ErrorMessage'])) {
+            $errorMessage = $response['ErrorMessage'];
+        } else {
+            $errorMessage = 'Unknown error.';
+        }
+
+        unset($response['ErrorMessage']);
+        $response['errorMessage'] = $errorMessage;
 
         return $response;
     }
@@ -297,35 +360,4 @@ class Client
         return $this->httpClient;
     }
 
-    /**
-     * Handle a response error.
-     *
-     * @param array $response A server's response
-     *
-     * @throws ActionException If an error was occuried
-     */
-    private function handleResponseError(array $response)
-    {
-        if (isset($response['errorCode'])) {
-            $errorCode = (int) $response['errorCode'];
-        } elseif (isset($response['ErrorCode'])) {
-            $errorCode = (int) $response['ErrorCode'];
-        } else {
-            return;
-        }
-
-        if (0 === $errorCode) {
-            return;
-        }
-
-        if (isset($response['errorMessage'])) {
-            $errorMessage = $response['errorMessage'];
-        } elseif (isset($response['ErrorMessage'])) {
-            $errorMessage = $response['ErrorMessage'];
-        } else {
-            $errorMessage = 'Unknown error.';
-        }
-
-        throw new ActionException($errorMessage, $errorCode);
-    }
 }

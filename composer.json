@@ -25,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Voronkovich\\SberbankAcquiring\\": "tests/"
+            "Voronkovich\\SberbankAcquiring\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "stable"

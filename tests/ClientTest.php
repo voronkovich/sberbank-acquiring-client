@@ -48,6 +48,16 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function test_registerOrder_jsonParamsIsNotAnArray()
+    {
+        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
+
+        $client->registerOrder(1, 1, 'returnUrl', array('jsonParams' => '{}'));
+    }
+
+    /**
      * @expectedException \Voronkovich\SberbankAcquiring\Exception\BadResponseException
      */
     public function test_execute_badResponse()

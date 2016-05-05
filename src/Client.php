@@ -100,6 +100,14 @@ class Client
         $data['amount']      = $amount;
         $data['returnUrl']   = $returnUrl;
 
+        if (isset($data['jsonParams'])) {
+            if (!is_array($data['jsonParams'])) {
+                throw new \InvalidArgumentException('The "jsonParams" parameter must be an array.');
+            }
+
+            $data['jsonParams'] = json_encode($data['jsonParams']);
+        }
+
         return $this->execute('register.do', $data);
     }
 
@@ -265,9 +273,6 @@ class Client
         $data['password'] = $this->password;
         $data['language'] = $this->language;
 
-        if (isset($data['jsonParams'])) {
-            $data['jsonParams'] = json_encode($data['jsonParams']);
-        }
 
         $httpClient = $this->getHttpClient();
 

@@ -271,7 +271,7 @@ class Client
 
         $httpClient = $this->getHttpClient();
 
-        list($response, $httpCode) = $httpClient->request($uri, $this->httpMethod, $headers, $data);
+        list($httpCode, $response) = $httpClient->request($uri, $this->httpMethod, $headers, $data);
 
         if (200 !== $httpCode) {
             $badResponseException = new BadResponseException(sprintf('Bad HTTP code: %d.', $httpCode), $httpCode);

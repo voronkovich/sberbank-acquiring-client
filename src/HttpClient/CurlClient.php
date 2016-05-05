@@ -65,7 +65,7 @@ class CurlClient implements HttpClientInterface
 
         $httpCode = curl_getinfo($this->curl, \CURLINFO_HTTP_CODE);
 
-        return array($response, $httpCode);
+        return array($httpCode, $response);
     }
 
     public function __destruct()

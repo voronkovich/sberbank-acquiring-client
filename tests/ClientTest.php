@@ -52,7 +52,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function test_execute_badResponse()
     {
-        $httpClient = $this->mockHttpClient(array('Internal server error.', 500));
+        $httpClient = $this->mockHttpClient(array(500, 'Internal server error.'));
 
         $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
         $this->setHttpClient($client, $httpClient);

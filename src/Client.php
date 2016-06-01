@@ -30,7 +30,7 @@ class Client
      */
     private $language = 'en';
 
-    private $apiUri = 'https://3dsec.sberbank.ru/payment/rest/';
+    private $apiUri = 'https://securepayments.sberbank.ru/';
     private $httpMethod = 'POST';
 
     private $dateFormat = 'YmdHis';

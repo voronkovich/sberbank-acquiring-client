@@ -76,7 +76,7 @@ class Client
         }
 
         if (isset($settings['httpClient'])) {
-            if (!$settings instanceof HttpClientInterface) {
+            if (!$settings['httpClient'] instanceof HttpClientInterface) {
                 throw new \InvalidArgumentException('An HTTP client must implement HttpClientInterface.');
             }
 

@@ -16,14 +16,19 @@ composer require 'voronkovich/sberbank-acquiring-client:dev-master'
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\Currency;
 
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
-$orderId = 1234;
+$orderId     = 1234;
 $orderAmount = 1000;
-$returnUrl = 'http://mycoolshop.local/payment-success';
+$returnUrl   = 'http://mycoolshop.local/payment-success';
 
-$result = $client->registerOrder($orderId, $orderAmount, $returnUrl);
+// You can pass additional parameters like a currency code and etc.
+$params['currency'] = Currency::EUR;
+$params['failUrl']  = 'http://mycoolshop.local/payment-failure';
+
+$result = $client->registerOrder($orderId, $orderAmount, $returnUrl, $params);
 
 list($orderId, $formUrl) = $result;
 

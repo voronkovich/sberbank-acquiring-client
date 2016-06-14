@@ -273,7 +273,6 @@ class Client
         $data['password'] = $this->password;
         $data['language'] = $this->language;
 
-
         $httpClient = $this->getHttpClient();
 
         list($httpCode, $response) = $httpClient->request($uri, $this->httpMethod, $headers, $data);

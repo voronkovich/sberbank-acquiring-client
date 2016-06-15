@@ -70,6 +70,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->execute('testAction');
     }
 
+    /**
+     * @expectedException \Voronkovich\SberbankAcquiring\Exception\ResponseParsingException
+     */
+    public function test_execute_malformedJsonResponse()
+    {
+        $httpClient = $this->mockHttpClient(array(200, 'Malformed json!'));
+
+        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
+        $this->setHttpClient($client, $httpClient);
+
+        $client->execute('testAction');
+    }
+
     private function setHttpClient($client, $httpClient)
     {
         $reflection = new \ReflectionClass($client);
@@ -80,8 +93,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     private function mockHttpClient(array $response)
     {
-        $response[0] = json_encode($response[0]);
-
         $httpClient = $this->getMock('\Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface');
 
         $httpClient

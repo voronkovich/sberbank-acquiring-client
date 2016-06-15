@@ -4,6 +4,11 @@ namespace Voronkovich\SberbankAcquiring\Tests;
 
 use Voronkovich\SberbankAcquiring\Client;
 
+/**
+ * Tests for client.
+ *
+ * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
+ */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -64,8 +69,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $httpClient = $this->mockHttpClient(array(500, 'Internal server error.'));
 
-        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
-        $this->setHttpClient($client, $httpClient);
+        $client = new Client(array(
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ));
 
         $client->execute('testAction');
     }
@@ -77,8 +85,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $httpClient = $this->mockHttpClient(array(200, 'Malformed json!'));
 
-        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
-        $this->setHttpClient($client, $httpClient);
+        $client = new Client(array(
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ));
 
         $client->execute('testAction');
     }
@@ -93,27 +104,78 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $httpClient = $this->mockHttpClient($response);
 
-        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
-        $this->setHttpClient($client, $httpClient);
+        $client = new Client(array(
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ));
 
         $client->execute('testAction');
     }
 
-    private function setHttpClient($client, $httpClient)
+    public function test_usingCustomHttpClient()
     {
-        $reflection = new \ReflectionClass($client);
-        $property = $reflection->getProperty('httpClient');
-        $property->setAccessible(true);
-        $property->setValue($client, $httpClient);
+        $httpClient = $this->mockHttpClient();
+
+        $httpClient
+            ->expects($this->once())
+            ->method('request')
+        ;
+
+        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123', 'httpClient' => $httpClient));
+
+        $client->execute('testAction');
     }
 
-    private function mockHttpClient(array $response)
+    public function test_settingHttpMethodAndApiUrl()
+    {
+        $httpClient = $this->mockHttpClient();
+
+        $httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('/api/rest/testAction', 'GET')
+        ;
+
+        $client = new Client(array(
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+            'httpMethod' => 'GET',
+            'apiUri' => '/api/rest/',
+        ));
+
+        $client->execute('testAction');
+    }
+
+    public function test_normalizeResponse()
+    {
+        $httpClient = $this->mockHttpClient(array(200, json_encode(array('ErrorCode' => 0, 'ErrorMessage' => 'No error.'))));
+
+        $client = new Client(array(
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ));
+
+        $response = $client->execute('testAction');
+
+        $this->assertArrayHasKey('errorCode', $response);
+        $this->assertArrayHasKey('errorMessage', $response);
+    }
+
+    private function mockHttpClient(array $response = null)
     {
         $httpClient = $this->getMock('\Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface');
 
+        if (null === $response) {
+            $response = array(200, json_encode(array('errorCode' => 0, 'errorMessage' => 'No error.')));
+        }
+
         $httpClient
             ->method('request')
-            ->willReturn($response);
+            ->willReturn($response)
+        ;
 
         return $httpClient;
     }

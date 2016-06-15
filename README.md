@@ -10,6 +10,43 @@ composer require 'voronkovich/sberbank-acquiring-client:dev-master'
 
 ## Usage
 
+### Instantiating a client
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+// In most cases to instantiate a client you need
+// to pass your username and password to a constructor
+$client = new Client([ 'userName' => 'YourUserName', 'password' => 'YourPassword' ]);
+
+// More advanced example
+$client = new Client([
+    'userName' => 'userName',
+    'password' => 'password',
+
+    // A language code in ISO 639-1 format.
+    // Use this option to set a language of error messages.
+    'language' => 'ru',
+
+    // An uri to send requests.
+    // Use this option if you want to use the Sberbank's test server.
+    'apiUri' => Client::API_URI_TEST,
+
+    // An HTTP method to use in requests.
+    // Must be "GET" or "POST" ("POST" is used by default).
+    'httpMethod' => 'GET',
+
+    // An HTTP client for sending requests.
+    // Use this option when you don't want to use
+    // a default HTTP client implementation distributed
+    // with this package (for example, when you have'nt
+    // a CURL extension installed in your server).
+    'httpClient' => new YourCustomHttpClient(),
+]);
+```
+
 ### Creating a new order
 
 ```php

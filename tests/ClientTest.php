@@ -83,6 +83,22 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->execute('testAction');
     }
 
+    /**
+     * @expectedException \Voronkovich\SberbankAcquiring\Exception\ActionException
+     * @expectedExceptionMessage Error!
+     */
+    public function test_execute_actionError()
+    {
+        $response = array(200, json_encode(array('errorCode' => 100, 'errorMessage' => 'Error!')));
+
+        $httpClient = $this->mockHttpClient($response);
+
+        $client = new Client(array('userName' => 'oleg', 'password' => 'qwerty123'));
+        $this->setHttpClient($client, $httpClient);
+
+        $client->execute('testAction');
+    }
+
     private function setHttpClient($client, $httpClient)
     {
         $reflection = new \ReflectionClass($client);

@@ -57,6 +57,7 @@ use Voronkovich\SberbankAcquiring\Currency;
 
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
+// Required arguments
 $orderId     = 1234;
 $orderAmount = 1000;
 $returnUrl   = 'http://mycoolshop.local/payment-success';

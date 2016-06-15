@@ -1,6 +1,6 @@
 # sberbank-acquiring-client [![Build Status](https://travis-ci.org/voronkovich/sberbank-acquiring-client.svg?branch=master)](https://travis-ci.org/voronkovich/sberbank-acquiring-client)
 
-PHP client for Sberbank's acquiring REST API.
+PHP client for [Sberbank's acquiring](http://data.sberbank.ru/en/s_m_business/bankingservice/equairing/) REST API.
 
 ## Installation
 

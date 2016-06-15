@@ -20,17 +20,31 @@ class Client
 {
     const ACTION_SUCCESS = 0;
 
+    const API_URI      = 'https://securepayments.sberbank.ru/payment/rest/';
+    const API_URI_TEST = 'https://3dsec.sberbank.ru/payment/rest/';
+
     private $userName = '';
     private $password = '';
 
     /**
-     * Language code in ISO 639-1 format.
+     * A language code in ISO 639-1 format.
      *
      * @var string
      */
     private $language = 'en';
 
-    private $apiUri = 'https://securepayments.sberbank.ru/payment/rest/';
+    /**
+     * An API uri.
+     *
+     * @var string
+     */
+    private $apiUri;
+
+    /**
+     * An HTTP method.
+     *
+     * @var string
+     */
     private $httpMethod = 'POST';
 
     private $dateFormat = 'YmdHis';
@@ -65,6 +79,8 @@ class Client
 
         if (isset($settings['apiUri'])) {
             $this->apiUri = $settings['apiUri'];
+        } else {
+            $this->apiUri = self::API_URI;
         }
 
         if (isset($settings['httpMethod'])) {

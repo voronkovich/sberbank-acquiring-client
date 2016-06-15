@@ -160,8 +160,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $response = $client->execute('testAction');
 
-        $this->assertArrayHasKey('errorCode', $response);
-        $this->assertArrayHasKey('errorMessage', $response);
+        $this->assertEquals($response, array('errorCode' => 0, 'errorMessage' => 'No error.'));
     }
 
     private function mockHttpClient(array $response = null)

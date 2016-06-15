@@ -129,3 +129,7 @@ $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 $result = $client->refundOrder($orderId, $amountToRefund);
 ```
+
+## License
+
+Copyright (c) Voronkovich Oleg. Distributed under the MIT.

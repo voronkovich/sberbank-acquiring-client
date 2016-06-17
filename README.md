@@ -20,8 +20,14 @@ use Voronkovich\SberbankAcquiring\Client;
 // In most cases to instantiate a client you need
 // to pass your username and password to a constructor
 $client = new Client([ 'userName' => 'YourUserName', 'password' => 'YourPassword' ]);
+```
 
-// More advanced example
+More advanced example:
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
 $client = new Client([
     'userName' => 'userName',
     'password' => 'password',

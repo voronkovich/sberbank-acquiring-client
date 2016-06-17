@@ -304,6 +304,85 @@ class Client
     }
 
     /**
+     * Payment order binding.
+     *
+     * @param string $orderId   An order identifier
+     * @param string $bindingId A binding identifier
+     * @param array  $data      Additional data
+     *
+     * @return array A server's response
+     */
+    public function paymentOrderBinding($orderId, $bindingId, array $data = array())
+    {
+        $data['mdOrder']   = $orderId;
+        $data['bindingId'] = $bindingId;
+
+        return $this->execute('paymentOrderBinding.do', $data);
+    }
+
+    /**
+     * Activate a binding.
+     *
+     * @param string $bindingId A binding identifier
+     * @param array  $data      Additional data
+     *
+     * @return array A server's response
+     */
+    public function bindCard($bindingId, array $data = array())
+    {
+        $data['bindingId'] = $bindingId;
+
+        return $this->execute('bindCard.do', $data);
+    }
+
+    /**
+     * Deactivate a binding.
+     *
+     * @param string $bindingId A binding identifier
+     * @param array  $data      Additional data
+     *
+     * @return array A server's response
+     */
+    public function unBindCard($bindingId, array $data = array())
+    {
+        $data['bindingId'] = $bindingId;
+
+        return $this->execute('unBindCard.do', $data);
+    }
+
+    /**
+     * Extend a binding.
+     *
+     * @param string    $bindingId  A binding identifier
+     * @param \DateTime $newExprity A new expiration date
+     * @param array     $data       Additional data
+     *
+     * @return array A server's response
+     */
+    public function extendBinding($bindingId, \DateTime $newExpiry, array $data = array())
+    {
+        $data['bindingId'] = $bindingId;
+        $data['newExpiry'] = $newExpiry->format('Ym');
+
+        return $this->execute('extendBinding.do', $data);
+    }
+
+    /**
+     * Get bindings.
+     *
+     * @param string $clientId A binding identifier
+     * @param array  $data     Additional data
+     *
+     * @return array A server's response
+     */
+    public function getBindings($clientId, array $data = array())
+    {
+        $data['clientId'] = $clientId;
+
+        return $this->execute('getBindings.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'

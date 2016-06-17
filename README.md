@@ -12,13 +12,14 @@ composer require 'voronkovich/sberbank-acquiring-client:dev-master'
 
 ### Instantiating a client
 
+In most cases to instantiate a client you need to pass your username and password to a constructor:
+
 ```php
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
 
-// In most cases to instantiate a client you need
-// to pass your username and password to a constructor
+/** @var Client $client */
 $client = new Client([ 'userName' => 'YourUserName', 'password' => 'YourPassword' ]);
 ```
 
@@ -29,6 +30,7 @@ More advanced example:
 
 use Voronkovich\SberbankAcquiring\Client;
 
+/** @var Client $client */
 $client = new Client([
     'userName' => 'userName',
     'password' => 'password',
@@ -62,6 +64,7 @@ $client = new Client([
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\Currency;
 
+/** @var Client $client */
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 // Required arguments
@@ -91,6 +94,7 @@ header('Location: ' . $paymentFormUrl);
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\OrderStatus;
 
+/** @var Client $client */
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 $result = $client->getOrderStatus($orderId);
@@ -108,6 +112,7 @@ if (OrderStatus::isDeposited($result['orderStatus'])) {
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\OrderStatus;
 
+/** @var Client $client */
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 $result = $client->getOrderStatusExtended($orderId);
@@ -124,6 +129,7 @@ if (OrderStatus::isDeclined($result['orderStatus'])) {
 
 use Voronkovich\SberbankAcquiring\Client;
 
+/** @var Client $client */
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 $result = $client->reverseOrder($orderId);
@@ -136,6 +142,7 @@ $result = $client->reverseOrder($orderId);
 
 use Voronkovich\SberbankAcquiring\Client;
 
+/** @var Client $client */
 $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 $result = $client->refundOrder($orderId, $amountToRefund);

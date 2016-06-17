@@ -272,7 +272,6 @@ class Client
      * @param string $action An action's name e.g. 'register.do'
      * @param array  $data   An actions's data
      *
-     * @throws ActionException
      * @throws NetworkException
      *
      * @return array A server's response
@@ -304,11 +303,7 @@ class Client
         }
 
         $response = $this->parseResponse($response);
-        $response = $this->normalizeResponse($response);
-
-        if (self::ACTION_SUCCESS !== $response['errorCode']) {
-            throw new ActionException($response['errorMessage'], $response['errorCode']);
-        }
+        $this->handleErrors($response);
 
         return $response;
     }
@@ -339,15 +334,13 @@ class Client
     /**
      * Normalize server's response.
      *
-     * Server's response can contain an error code and an error message in differend fields.
-     * This method handles those situations and normalizes the response.
-     *
      * @param array $response A response
      *
-     * @return array A normalized response
+     * @throws ActionException
      */
-    private function normalizeResponse(array $response)
+    private function handleErrors(array &$response)
     {
+        // Server's response can contain an error code and an error message in differend fields.
         if (isset($response['errorCode'])) {
             $errorCode = (int) $response['errorCode'];
         } elseif (isset($response['ErrorCode'])) {
@@ -356,8 +349,8 @@ class Client
             $errorCode = self::ACTION_SUCCESS;
         }
 
+        unset($response['errorCode']);
         unset($response['ErrorCode']);
-        $response['errorCode'] = $errorCode;
 
         if (isset($response['errorMessage'])) {
             $errorMessage = $response['errorMessage'];
@@ -367,10 +360,12 @@ class Client
             $errorMessage = 'Unknown error.';
         }
 
+        unset($response['errorMessage']);
         unset($response['ErrorMessage']);
-        $response['errorMessage'] = $errorMessage;
 
-        return $response;
+        if (self::ACTION_SUCCESS !== $errorCode) {
+            throw new ActionException($errorMessage, $errorCode);
+        }
     }
 
     /**

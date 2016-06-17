@@ -148,21 +148,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->execute('testAction');
     }
 
-    public function test_normalizeResponse()
-    {
-        $httpClient = $this->mockHttpClient(array(200, json_encode(array('ErrorCode' => 0, 'ErrorMessage' => 'No error.'))));
-
-        $client = new Client(array(
-            'userName' => 'oleg',
-            'password' => 'qwerty123',
-            'httpClient' => $httpClient,
-        ));
-
-        $response = $client->execute('testAction');
-
-        $this->assertEquals($response, array('errorCode' => 0, 'errorMessage' => 'No error.'));
-    }
-
     private function mockHttpClient(array $response = null)
     {
         $httpClient = $this->getMock('\Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface');

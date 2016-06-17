@@ -28,6 +28,7 @@ More advanced example:
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
+
 $client = new Client([
     'userName' => 'userName',
     'password' => 'password',

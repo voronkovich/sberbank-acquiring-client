@@ -27,11 +27,11 @@ class Client
     private $password = '';
 
     /**
-     * A language code in ISO 639-1 format.
+     * A language code in ISO 639-1 format ('en', 'ru' and etc.).
      *
      * @var string
      */
-    private $language = 'en';
+    private $language;
 
     /**
      * An API uri.
@@ -287,7 +287,10 @@ class Client
 
         $data['userName'] = $this->userName;
         $data['password'] = $this->password;
-        $data['language'] = $this->language;
+
+        if (!isset($data['language']) && null !== $this->language) {
+            $data['language'] = $this->language;
+        }
 
         $httpClient = $this->getHttpClient();
 

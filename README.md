@@ -83,7 +83,7 @@ header('Location: ' . $paymentFormUrl);
 
 ### Getting a status of an exising order
 
-Never use this method, because a Sberbank's gateway does'nt handle it properly, use a `getOrderStatusExtended` instead. For more information see a Sberbank's documentation.
+**Never use this method**, because a Sberbank's gateway does'nt handle it properly, use a `getOrderStatusExtended` instead. For more information see a Sberbank's documentation.
 
 ```php
 <?php

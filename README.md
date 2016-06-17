@@ -5,7 +5,7 @@ PHP client for [Sberbank's acquiring](http://data.sberbank.ru/en/s_m_business/ba
 ## Installation
 
 ```sh
-composer require 'voronkovich/sberbank-acquiring-client:dev-master'
+composer require 'voronkovich/sberbank-acquiring-client'
 ```
 
 ## Usage
@@ -149,6 +149,9 @@ $client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
 
 $result = $client->refundOrder($orderId, $amountToRefund);
 ```
+
+---
+See `Client` source code to find methods for payment bindings and dealing with 2-step payments.
 
 ## License
 

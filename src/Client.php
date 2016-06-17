@@ -103,16 +103,36 @@ class Client
     /**
      * Register a new order.
      *
-     * @param int|string $orderNumber An order identifier
-     * @param int        $amount      An order amount
-     * @param string     $returnUrl   An url for redirecting a user after successfull order handling
-     * @param array      $data        Additional data
+     * @param int|string $orderId   An order identifier
+     * @param int        $amount    An order amount
+     * @param string     $returnUrl An url for redirecting a user after successfull order handling
+     * @param array      $data      Additional data
      *
      * @return array A server's response
      */
-    public function registerOrder($orderNumber, $amount, $returnUrl, array $data = array())
+    public function registerOrder($orderId, $amount, $returnUrl, array $data = array())
     {
-        $data['orderNumber'] = $orderNumber;
+        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'register.do');
+    }
+
+    /**
+     * Register a new order using a 2-step payment process.
+     *
+     * @param int|string $orderId   An order identifier
+     * @param int        $amount    An order amount
+     * @param string     $returnUrl An url for redirecting a user after successfull order handling
+     * @param array      $data      Additional data
+     *
+     * @return array A server's response
+     */
+    public function registerOrderPreAuth($orderId, $amount, $returnUrl, array $data = array())
+    {
+        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'registerPreAuth.do');
+    }
+
+    private function doRegisterOrder($orderId, $amount, $returnUrl, array $data = array(), $method = 'register.do')
+    {
+        $data['orderNumber'] = $orderId;
         $data['amount']      = $amount;
         $data['returnUrl']   = $returnUrl;
 
@@ -124,7 +144,24 @@ class Client
             $data['jsonParams'] = json_encode($data['jsonParams']);
         }
 
-        return $this->execute('register.do', $data);
+        return $this->execute($method, $data);
+    }
+
+    /**
+     * Deposit an existing order.
+     *
+     * @param string $orderId An order identifier
+     * @param int    $amount  An order amount
+     * @param array  $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function deposit($orderId, $amount, array $data = array())
+    {
+        $data['orderId'] = $orderId;
+        $date['amount']  = $amount;
+
+        return $this->execute('deposit.do', $data);
     }
 
     /**

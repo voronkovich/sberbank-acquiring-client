@@ -56,6 +56,24 @@ $client = new Client([
 ]);
 ```
 
+Also you can use an adapter for the [Guzzle](https://github.com/guzzle/guzzle):
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\HttpClient\GuzzleAdapter;
+
+use GuzzleHttp\Client as Guzzle
+
+/** @var Client $client */
+$client = new Client([
+    'userName' => 'userName',
+    'password' => 'password',
+
+    'httpClient' => new GuzzleAdapter(new Guzzle()),
+]);
+```
+
 ### Creating a new order
 
 ```php

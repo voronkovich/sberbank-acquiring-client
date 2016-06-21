@@ -29,6 +29,7 @@ More advanced example:
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\Currency;
 
 /** @var Client $client */
 $client = new Client([
@@ -38,6 +39,10 @@ $client = new Client([
     // A language code in ISO 639-1 format.
     // Use this option to set a language of error messages.
     'language' => 'ru',
+
+    // A currency code in ISO 4217 format.
+    // Use this option to set a currency used by default.
+    'currency' => Currency::RUB,
 
     // An uri to send requests.
     // Use this option if you want to use the Sberbank's test server.

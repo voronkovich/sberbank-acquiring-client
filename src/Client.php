@@ -27,6 +27,13 @@ class Client
     private $password = '';
 
     /**
+     * Currency code in ISO 4217 format.
+     *
+     * @var int
+     */
+    private $currency;
+
+    /**
      * A language code in ISO 639-1 format ('en', 'ru' and etc.).
      *
      * @var string
@@ -75,6 +82,10 @@ class Client
 
         if (isset($settings['language'])) {
             $this->language = $settings['language'];
+        }
+
+        if (isset($settings['currency'])) {
+            $this->currency = $settings['currency'];
         }
 
         if (isset($settings['apiUri'])) {
@@ -135,6 +146,10 @@ class Client
         $data['orderNumber'] = $orderId;
         $data['amount']      = $amount;
         $data['returnUrl']   = $returnUrl;
+
+        if (!isset($data['currency']) && null !== $this->currency) {
+            $data['currency'] = $this->currency;
+        }
 
         if (isset($data['jsonParams'])) {
             if (!is_array($data['jsonParams'])) {

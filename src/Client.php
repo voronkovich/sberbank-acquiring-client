@@ -68,6 +68,10 @@ class Client
      */
     public function __construct(array $settings)
     {
+        if (!extension_loaded('json')) {
+            throw new \RuntimeException('JSON extension is not loaded.');
+        }
+
         if (isset($settings['userName'])) {
             $this->userName = $settings['userName'];
         } else {

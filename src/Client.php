@@ -178,7 +178,7 @@ class Client
     public function deposit($orderId, $amount, array $data = array())
     {
         $data['orderId'] = $orderId;
-        $date['amount']  = $amount;
+        $data['amount']  = $amount;
 
         return $this->execute('deposit.do', $data);
     }

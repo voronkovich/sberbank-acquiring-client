@@ -148,6 +148,17 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->execute('testAction');
     }
 
+    public function test_deposit()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderId' => 'aaa-bbb-yyy',
+            'amount' => 1000,
+            'currency' => 810,
+        ));
+
+        $client->deposit('aaa-bbb-yyy', 1000, array('currency' => 810));
+    }
+
     private function mockHttpClient(array $response = null)
     {
         $httpClient = $this->getMock('\Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface');
@@ -162,5 +173,27 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         ;
 
         return $httpClient;
+    }
+
+    private function getClientToTestSendingData($data)
+    {
+        $httpClient = $this->mockHttpClient();
+
+        $data['userName'] = 'oleg';
+        $data['password'] = 'qwerty123';
+
+        $httpClient
+            ->expects($this->once())
+            ->method('request')
+            ->with($this->anything(), $this->anything(), $this->anything(), $this->equalTo($data))
+        ;
+
+        $client = new Client(array(
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ));
+
+        return $client;
     }
 }

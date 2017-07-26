@@ -148,7 +148,31 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->execute('testAction');
     }
 
-    public function test_deposit()
+    public function test_registerOrder_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderNumber' => 'eee-eee-eee',
+            'amount' => 1200,
+            'returnUrl' => 'https://github.com/voronkovich/sberbank-acquiring-client',
+            'currency' => 330,
+        ));
+
+        $client->registerOrder('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', array('currency' => 330));
+    }
+
+    public function test_registerOrderPreAuth_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderNumber' => 'eee-eee-eee',
+            'amount' => 1200,
+            'returnUrl' => 'https://github.com/voronkovich/sberbank-acquiring-client',
+            'currency' => 330,
+        ));
+
+        $client->registerOrderPreAuth('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', array('currency' => 330));
+    }
+
+    public function test_deposit_sendingData()
     {
         $client = $this->getClientToTestSendingData(array(
             'orderId' => 'aaa-bbb-yyy',
@@ -157,6 +181,109 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         ));
 
         $client->deposit('aaa-bbb-yyy', 1000, array('currency' => 810));
+    }
+
+    public function test_reverseOrder_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderId' => 'aaa-bbb-yyy',
+            'currency' => 480,
+        ));
+
+        $client->reverseOrder('aaa-bbb-yyy', array('currency' => 480));
+    }
+
+    public function test_refundOrder_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderId' => 'aaa-bbb-yyy',
+            'amount' => 5050,
+            'currency' => 456,
+        ));
+
+        $client->refundOrder('aaa-bbb-yyy', 5050, array('currency' => 456));
+    }
+
+    public function test_getOrderStatus_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderId' => 'aaa-bbb-yyy',
+            'currency' => 100,
+        ));
+
+        $client->getOrderStatus('aaa-bbb-yyy', array('currency' => 100));
+    }
+
+    public function test_getOrderStatusExtended_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'orderId' => 'aaa-bbb-yyy',
+            'currency' => 100,
+        ));
+
+        $client->getOrderStatusExtended('aaa-bbb-yyy', array('currency' => 100));
+    }
+
+    public function test_verifyEnrollment_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'pan' => 'aaazzz',
+            'currency' => 200,
+        ));
+
+        $client->verifyEnrollment('aaazzz', array('currency' => 200));
+    }
+
+    public function test_paymentOrderBinding_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'mdOrder' => 'xxx-yyy-zzz',
+            'bindingId' => 600,
+            'language' => 'en',
+        ));
+
+        $client->paymentOrderBinding('xxx-yyy-zzz', 600, array('language' => 'en'));
+    }
+
+    public function test_bindCard_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'bindingId' => 'bbb000',
+            'language' => 'ru',
+        ));
+
+        $client->bindCard('bbb000', array('language' => 'ru'));
+    }
+
+    public function test_unBindCard_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'bindingId' => 'uuu800',
+            'language' => 'en',
+        ));
+
+        $client->unBindCard('uuu800', array('language' => 'en'));
+    }
+
+    public function test_extendBinding_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'bindingId' => 'eeeB00',
+            'newExpiry' => '203009',
+            'language' => 'ru',
+        ));
+
+        $client->extendBinding('eeeB00', new \DateTime('2030-09'), array('language' => 'ru'));
+    }
+
+    public function test_getBindings_sendingData()
+    {
+        $client = $this->getClientToTestSendingData(array(
+            'clientId' => 'clientIDABC',
+            'language' => 'ru',
+        ));
+
+        $client->getBindings('clientIDABC', array('language' => 'ru'));
     }
 
     private function mockHttpClient(array $response = null)

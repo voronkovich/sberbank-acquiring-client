@@ -27,7 +27,7 @@ class FileGetContentsClient implements HttpClientInterface
 			$statusCodeParts = explode(' ', $http_response_header[0]);
 			
 			if (count($statusCodeParts) > 1) {
-	            $statusCode = intval($statusCodeParts[1]);
+				$statusCode = intval($statusCodeParts[1]);
 			}
 		}
 

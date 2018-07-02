@@ -63,28 +63,14 @@ class Client
      */
     private $httpClient;
 
-    /**
-     * Constructor.
-     *
-     * @param array $settings Client's settings
-     */
-    public function __construct(array $settings)
+    public function __construct(string $username, string $password, array $settings = [])
     {
         if (!extension_loaded('json')) {
             throw new \RuntimeException('JSON extension is not loaded.');
         }
 
-        if (isset($settings['userName'])) {
-            $this->userName = $settings['userName'];
-        } else {
-            throw new \InvalidArgumentException('UserName is required.');
-        }
-
-        if (isset($settings['password'])) {
-            $this->password = $settings['password'];
-        } else {
-            throw new \InvalidArgumentException('Password is required.');
-        }
+        $this->userName = $username;
+        $this->password = $password;
 
         if (isset($settings['language'])) {
             $this->language = $settings['language'];

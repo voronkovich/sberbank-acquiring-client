@@ -275,7 +275,7 @@ class Client
             if (empty($data['transactionStates'])) {
                 throw new \InvalidArgumentException('A "transactionStates" parameter cannot be empty.');
             } elseif (0 < count(array_diff($data['transactionStates'], $allowedStatuses))) {
-                throw new \DomainException('A "transactionStates" parameter contains not allowed values.');
+                throw new \InvalidArgumentException('A "transactionStates" parameter contains not allowed values.');
             }
         } else {
             $data['transactionStates'] = $allowedStatuses;

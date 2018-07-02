@@ -14,7 +14,7 @@ use Voronkovich\SberbankAcquiring\Client;
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \DomainException
+     * @expectedException \InvalidArgumentException
      */
     public function test_constructor_invalidHttpMethod()
     {

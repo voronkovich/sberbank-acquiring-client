@@ -65,30 +65,19 @@ class Client
 
     public function __construct(string $username, string $password, array $settings = [])
     {
-        if (!extension_loaded('json')) {
+        if (!\extension_loaded('json')) {
             throw new \RuntimeException('JSON extension is not loaded.');
         }
 
         $this->userName = $username;
         $this->password = $password;
-
-        if (isset($settings['language'])) {
-            $this->language = $settings['language'];
-        }
-
-        if (isset($settings['currency'])) {
-            $this->currency = $settings['currency'];
-        }
-
-        if (isset($settings['apiUri'])) {
-            $this->apiUri = $settings['apiUri'];
-        } else {
-            $this->apiUri = self::API_URI;
-        }
+        $this->language = $settings['language'] ?? null;
+        $this->currency = $settings['currency'] ?? null;
+        $this->apiUri = $settings['apiUri'] ?? self::API_URI;
 
         if (isset($settings['httpMethod'])) {
-            if ('GET' !== $settings['httpMethod'] && 'POST' !== $settings['httpMethod']) {
-                throw new \DomainException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $settings['httpMethod']));
+            if (!in_array($settings['httpMethod'], [ 'GET', 'POST' ])) {
+                throw new \InvalidArgumentException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $settings['httpMethod']));
             }
 
             $this->httpMethod = $settings['httpMethod'];

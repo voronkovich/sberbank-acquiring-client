@@ -113,7 +113,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function registerOrder($orderId, $amount, $returnUrl, array $data = array())
+    public function registerOrder($orderId, $amount, $returnUrl, array $data = [])
     {
         return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'register.do');
     }
@@ -128,12 +128,12 @@ class Client
      *
      * @return array A server's response
      */
-    public function registerOrderPreAuth($orderId, $amount, $returnUrl, array $data = array())
+    public function registerOrderPreAuth($orderId, $amount, $returnUrl, array $data = [])
     {
         return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'registerPreAuth.do');
     }
 
-    private function doRegisterOrder($orderId, $amount, $returnUrl, array $data = array(), $method = 'register.do')
+    private function doRegisterOrder($orderId, $amount, $returnUrl, array $data = [], $method = 'register.do')
     {
         $data['orderNumber'] = $orderId;
         $data['amount']      = $amount;
@@ -163,7 +163,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function deposit($orderId, $amount, array $data = array())
+    public function deposit($orderId, $amount, array $data = [])
     {
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
@@ -179,7 +179,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function reverseOrder($orderId, array $data = array())
+    public function reverseOrder($orderId, array $data = [])
     {
         $data['orderId'] = $orderId;
 
@@ -195,7 +195,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function refundOrder($orderId, $amount, array $data = array())
+    public function refundOrder($orderId, $amount, array $data = [])
     {
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
@@ -211,7 +211,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function getOrderStatus($orderId, array $data = array())
+    public function getOrderStatus($orderId, array $data = [])
     {
         $data['orderId'] = $orderId;
 
@@ -226,7 +226,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function getOrderStatusExtended($orderId, array $data = array())
+    public function getOrderStatusExtended($orderId, array $data = [])
     {
         $data['orderId'] = $orderId;
 
@@ -241,7 +241,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function verifyEnrollment($pan, array $data = array())
+    public function verifyEnrollment($pan, array $data = [])
     {
         $data['pan'] = $pan;
 
@@ -259,7 +259,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function getLastOrdersForMerchants(\DateTime $from, \DateTime $to = null, array $data = array())
+    public function getLastOrdersForMerchants(\DateTime $from, \DateTime $to = null, array $data = [])
     {
         if (null === $to) {
             $to = new \DateTime();
@@ -269,14 +269,14 @@ class Client
             throw new \InvalidArgumentException('A "from" parameter must be less than "to" parameter.');
         }
 
-        $allowedStatuses = array(
+        $allowedStatuses = [
             OrderStatus::CREATED,
             OrderStatus::APPROVED,
             OrderStatus::DEPOSITED,
             OrderStatus::REVERSED,
             OrderStatus::DECLINED,
             OrderStatus::REFUNDED,
-        );
+        ];
 
         if (isset($data['transactionStates'])) {
             if (!is_array($data['transactionStates'])) {
@@ -299,7 +299,7 @@ class Client
                 throw new \InvalidArgumentException('A "merchants" parameter must be an array.');
             }
         } else {
-            $data['merchants'] = array();
+            $data['merchants'] = [];
         }
 
         $data['from']              = $from->format($this->dateFormat);
@@ -319,7 +319,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function paymentOrderBinding($orderId, $bindingId, array $data = array())
+    public function paymentOrderBinding($orderId, $bindingId, array $data = [])
     {
         $data['mdOrder']   = $orderId;
         $data['bindingId'] = $bindingId;
@@ -335,7 +335,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function bindCard($bindingId, array $data = array())
+    public function bindCard($bindingId, array $data = [])
     {
         $data['bindingId'] = $bindingId;
 
@@ -350,7 +350,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function unBindCard($bindingId, array $data = array())
+    public function unBindCard($bindingId, array $data = [])
     {
         $data['bindingId'] = $bindingId;
 
@@ -366,7 +366,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function extendBinding($bindingId, \DateTime $newExpiry, array $data = array())
+    public function extendBinding($bindingId, \DateTime $newExpiry, array $data = [])
     {
         $data['bindingId'] = $bindingId;
         $data['newExpiry'] = $newExpiry->format('Ym');
@@ -382,7 +382,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function getBindings($clientId, array $data = array())
+    public function getBindings($clientId, array $data = [])
     {
         $data['clientId'] = $clientId;
 
@@ -399,13 +399,13 @@ class Client
      *
      * @return array A server's response
      */
-    public function execute($action, array $data = array())
+    public function execute($action, array $data = [])
     {
         $uri = $this->apiUri . $action;
 
-        $headers = array(
+        $headers = [
             'Cache-Control: no-cache',
-        );
+        ];
 
         $data['userName'] = $this->userName;
         $data['password'] = $this->password;
@@ -499,11 +499,11 @@ class Client
     private function getHttpClient()
     {
         if (null === $this->httpClient) {
-            $this->httpClient = new CurlClient(array(
+            $this->httpClient = new CurlClient([
                 \CURLOPT_VERBOSE => false,
                 \CURLOPT_SSL_VERIFYHOST => false,
                 \CURLOPT_SSL_VERIFYPEER => false,
-            ));
+            ]);
         }
 
         return $this->httpClient;

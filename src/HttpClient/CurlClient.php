@@ -14,7 +14,7 @@ use Voronkovich\SberbankAcquiring\Exception\NetworkException;
 class CurlClient implements HttpClientInterface
 {
     private $curl;
-    private $curlOptions = array();
+    private $curlOptions = [];
 
     public function __construct(array $curlOptions)
     {
@@ -35,7 +35,7 @@ class CurlClient implements HttpClientInterface
         return $this->curl;
     }
 
-    public function request($uri, $method = 'GET', array $headers = array(), array $data = array())
+    public function request($uri, $method = 'GET', array $headers = [], array $data = [])
     {
         $data = http_build_query($data, '', '&');
 
@@ -67,7 +67,7 @@ class CurlClient implements HttpClientInterface
 
         $httpCode = curl_getinfo($this->curl, \CURLINFO_HTTP_CODE);
 
-        return array($httpCode, $response);
+        return [$httpCode, $response];
     }
 
     public function __destruct()

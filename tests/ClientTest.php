@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Voronkovich\SberbankAcquiring\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
 
 /**
- * Tests for client.
- *
  * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
  */
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
@@ -208,11 +208,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getClientToTestSendingData([
             'mdOrder' => 'xxx-yyy-zzz',
-            'bindingId' => 600,
+            'bindingId' => '600',
             'language' => 'en',
         ]);
 
-        $client->paymentOrderBinding('xxx-yyy-zzz', 600, ['language' => 'en']);
+        $client->paymentOrderBinding('xxx-yyy-zzz', '600', ['language' => 'en']);
     }
 
     public function test_bindCard_sendingData()
@@ -258,7 +258,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     private function mockHttpClient(array $response = null)
     {
-        $httpClient = $this->getMock('\Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface');
+        $httpClient = $this->createMock(HttpClientInterface::class);
 
         if (null === $response) {
             $response = [200, json_encode(['errorCode' => 0, 'errorMessage' => 'No error.'])];

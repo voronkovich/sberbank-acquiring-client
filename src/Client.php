@@ -102,7 +102,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function registerOrder($orderId, $amount, $returnUrl, array $data = [])
+    public function registerOrder($orderId, int $amount, string $returnUrl, array $data = []): array
     {
         return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'register.do');
     }
@@ -117,12 +117,12 @@ class Client
      *
      * @return array A server's response
      */
-    public function registerOrderPreAuth($orderId, $amount, $returnUrl, array $data = [])
+    public function registerOrderPreAuth($orderId, int $amount, string $returnUrl, array $data = []): array
     {
         return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'registerPreAuth.do');
     }
 
-    private function doRegisterOrder($orderId, $amount, $returnUrl, array $data = [], $method = 'register.do')
+    private function doRegisterOrder($orderId, int $amount, string $returnUrl, array $data = [], $method = 'register.do'): array
     {
         $data['orderNumber'] = $orderId;
         $data['amount']      = $amount;
@@ -146,13 +146,13 @@ class Client
     /**
      * Deposit an existing order.
      *
-     * @param string $orderId An order identifier
-     * @param int    $amount  An order amount
-     * @param array  $data    Additional data
+     * @param int|string $orderId An order identifier
+     * @param int        $amount  An order amount
+     * @param array      $data    Additional data
      *
      * @return array A server's response
      */
-    public function deposit($orderId, $amount, array $data = [])
+    public function deposit($orderId, int $amount, array $data = []): array
     {
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
@@ -163,12 +163,12 @@ class Client
     /**
      * Reverse an existing order.
      *
-     * @param string $orderId An order identifier
-     * @param array  $data    Additional data
+     * @param int|string $orderId An order identifier
+     * @param array      $data    Additional data
      *
      * @return array A server's response
      */
-    public function reverseOrder($orderId, array $data = [])
+    public function reverseOrder($orderId, array $data = []): array
     {
         $data['orderId'] = $orderId;
 
@@ -178,13 +178,13 @@ class Client
     /**
      * Refund an existing order.
      *
-     * @param string $orderId An order identifier
-     * @param int    $amount  An amount to refund
-     * @param array  $data    Additional data
+     * @param int|string $orderId An order identifier
+     * @param int        $amount  An amount to refund
+     * @param array      $data    Additional data
      *
      * @return array A server's response
      */
-    public function refundOrder($orderId, $amount, array $data = [])
+    public function refundOrder($orderId, int $amount, array $data = []): array
     {
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
@@ -195,12 +195,12 @@ class Client
     /**
      * Get an existing order's status.
      *
-     * @param string $orderId An order identifier
-     * @param array  $data    Additional data
+     * @param int|string $orderId An order identifier
+     * @param array      $data    Additional data
      *
      * @return array A server's response
      */
-    public function getOrderStatus($orderId, array $data = [])
+    public function getOrderStatus($orderId, array $data = []): array
     {
         $data['orderId'] = $orderId;
 
@@ -210,12 +210,12 @@ class Client
     /**
      * Get an existing order's extended status.
      *
-     * @param string $orderId An order identifier
-     * @param array  $data    Additional data
+     * @param int|string $orderId An order identifier
+     * @param array      $data    Additional data
      *
      * @return array A server's response
      */
-    public function getOrderStatusExtended($orderId, array $data = [])
+    public function getOrderStatusExtended($orderId, array $data = []): array
     {
         $data['orderId'] = $orderId;
 
@@ -230,7 +230,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function verifyEnrollment($pan, array $data = [])
+    public function verifyEnrollment(string $pan, array $data = []): array
     {
         $data['pan'] = $pan;
 
@@ -244,11 +244,9 @@ class Client
      * @param \DateTime|null $to   An ending date of a period
      * @param array          $data Additional data
      *
-     * @thows \UnexpectedValueException
-     *
      * @return array A server's response
      */
-    public function getLastOrdersForMerchants(\DateTime $from, \DateTime $to = null, array $data = [])
+    public function getLastOrdersForMerchants(\DateTime $from, \DateTime $to = null, array $data = []): array
     {
         if (null === $to) {
             $to = new \DateTime();
@@ -302,13 +300,13 @@ class Client
     /**
      * Payment order binding.
      *
-     * @param string $orderId   An order identifier
-     * @param string $bindingId A binding identifier
-     * @param array  $data      Additional data
+     * @param int|string $orderId   An order identifier
+     * @param int|string $bindingId A binding identifier
+     * @param array      $data      Additional data
      *
      * @return array A server's response
      */
-    public function paymentOrderBinding($orderId, $bindingId, array $data = [])
+    public function paymentOrderBinding($orderId, $bindingId, array $data = []): array
     {
         $data['mdOrder']   = $orderId;
         $data['bindingId'] = $bindingId;
@@ -319,12 +317,12 @@ class Client
     /**
      * Activate a binding.
      *
-     * @param string $bindingId A binding identifier
-     * @param array  $data      Additional data
+     * @param int|string $bindingId A binding identifier
+     * @param array      $data      Additional data
      *
      * @return array A server's response
      */
-    public function bindCard($bindingId, array $data = [])
+    public function bindCard($bindingId, array $data = []): array
     {
         $data['bindingId'] = $bindingId;
 
@@ -334,12 +332,12 @@ class Client
     /**
      * Deactivate a binding.
      *
-     * @param string $bindingId A binding identifier
-     * @param array  $data      Additional data
+     * @param int|string $bindingId A binding identifier
+     * @param array      $data      Additional data
      *
      * @return array A server's response
      */
-    public function unBindCard($bindingId, array $data = [])
+    public function unBindCard($bindingId, array $data = []): array
     {
         $data['bindingId'] = $bindingId;
 
@@ -349,13 +347,13 @@ class Client
     /**
      * Extend a binding.
      *
-     * @param string    $bindingId  A binding identifier
-     * @param \DateTime $newExprity A new expiration date
-     * @param array     $data       Additional data
+     * @param int|string $bindingId  A binding identifier
+     * @param \DateTime  $newExprity A new expiration date
+     * @param array      $data       Additional data
      *
      * @return array A server's response
      */
-    public function extendBinding($bindingId, \DateTime $newExpiry, array $data = [])
+    public function extendBinding($bindingId, \DateTime $newExpiry, array $data = []): array
     {
         $data['bindingId'] = $bindingId;
         $data['newExpiry'] = $newExpiry->format('Ym');
@@ -366,12 +364,12 @@ class Client
     /**
      * Get bindings.
      *
-     * @param string $clientId A binding identifier
-     * @param array  $data     Additional data
+     * @param int|string $clientId A binding identifier
+     * @param array      $data     Additional data
      *
      * @return array A server's response
      */
-    public function getBindings($clientId, array $data = [])
+    public function getBindings($clientId, array $data = []): array
     {
         $data['clientId'] = $clientId;
 
@@ -388,7 +386,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function execute($action, array $data = [])
+    public function execute(string $action, array $data = []): array
     {
         $uri = $this->apiUri . $action;
 
@@ -429,7 +427,7 @@ class Client
      *
      * @return array
      */
-    private function parseResponse($response)
+    private function parseResponse(string $response): array
     {
         $response  = json_decode($response, true);
         $errorCode = json_last_error();
@@ -482,10 +480,8 @@ class Client
 
     /**
      * Get an HTTP client.
-     *
-     * @return HttpClientInterface
      */
-    private function getHttpClient()
+    private function getHttpClient(): HttpClientInterface
     {
         if (null === $this->httpClient) {
             $this->httpClient = new CurlClient([

@@ -16,14 +16,9 @@ interface HttpClientInterface
     /**
      * Send an HTTP request.
      *
-     * @param string $uri
-     * @param string $method
-     * @param array  $headers
-     * @param array  $data
-     *
      * @throws NetworkException
      *
      * @return array A response
      */
-    public function request($uri, $method = 'GET', array $headers = [], array $data = []);
+    public function request(string $uri, string $method = 'GET', array $headers = [], array $data = []): array;
 }

@@ -33,43 +33,43 @@ class OrderStatus
     // An order was declined
     const DECLINED = 6;
 
-    public static function isCreated($status)
+    public static function isCreated($status): bool
     {
         // (int) '' === 0
         return '' !== $status && self::CREATED === (int) $status;
     }
 
-    public static function isApproved($status)
+    public static function isApproved($status): bool
     {
         return self::APPROVED === (int) $status;
     }
 
-    public static function isDeposited($status)
+    public static function isDeposited($status): bool
     {
         return self::DEPOSITED === (int) $status;
     }
 
-    public static function isReversed($status)
+    public static function isReversed($status): bool
     {
         return self::REVERSED === (int) $status;
     }
 
-    public static function isRefunded($status)
+    public static function isRefunded($status): bool
     {
         return self::REFUNDED === (int) $status;
     }
 
-    public static function isAuthorizationInitialized($status)
+    public static function isAuthorizationInitialized($status): bool
     {
         return self::AUTHORIZATION_INITIALIZED === (int) $status;
     }
 
-    public static function isDeclined($status)
+    public static function isDeclined($status): bool
     {
         return self::DECLINED === (int) $status;
     }
 
-    public static function statusToString($status)
+    public static function statusToString($status): string
     {
         switch ((int) $status) {
             case self::CREATED:

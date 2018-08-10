@@ -1,6 +1,6 @@
 # sberbank-acquiring-client [![Build Status](https://travis-ci.org/voronkovich/sberbank-acquiring-client.svg?branch=master)](https://travis-ci.org/voronkovich/sberbank-acquiring-client)
 
-PHP client for [Sberbank's acquiring](http://data.sberbank.ru/en/s_m_business/bankingservice/equairing/) REST API.
+PHP client for [Sberbank's acquiring](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest) REST API.
 
 ## Installation
 
@@ -19,8 +19,7 @@ In most cases to instantiate a client you need to pass your username and passwor
 
 use Voronkovich\SberbankAcquiring\Client;
 
-/** @var Client $client */
-$client = new Client([ 'userName' => 'YourUserName', 'password' => 'YourPassword' ]);
+$client = new Client('username', 'password');
 ```
 
 More advanced example:
@@ -31,11 +30,7 @@ More advanced example:
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\Currency;
 
-/** @var Client $client */
-$client = new Client([
-    'userName' => 'userName',
-    'password' => 'password',
-
+$client = new Client('username', 'password', [
     // A language code in ISO 639-1 format.
     // Use this option to set a language of error messages.
     'language' => 'ru',
@@ -68,18 +63,16 @@ Also you can use an adapter for the [Guzzle](https://github.com/guzzle/guzzle):
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\HttpClient\GuzzleAdapter;
 
-use GuzzleHttp\Client as Guzzle
+use GuzzleHttp\Client as Guzzle;
 
-/** @var Client $client */
-$client = new Client([
-    'userName' => 'userName',
-    'password' => 'password',
-
+$client = new Client('username', 'password', [
     'httpClient' => new GuzzleAdapter(new Guzzle()),
 ]);
 ```
 
 ### Creating a new order
+
+[register.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:register)
 
 ```php
 <?php
@@ -87,8 +80,7 @@ $client = new Client([
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\Currency;
 
-/** @var Client $client */
-$client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
+$client = new Client('username', 'password');
 
 // Required arguments
 $orderId     = 1234;
@@ -111,6 +103,8 @@ Use a `registerOrderPreAuth` method to create a 2-step order.
 
 ### Getting a status of an exising order
 
+[getOrderStatus.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatus)
+
 **Never use this method**, because a Sberbank's gateway does'nt handle it properly, use a `getOrderStatusExtended` instead. For more information see a Sberbank's documentation.
 
 ```php
@@ -119,8 +113,7 @@ Use a `registerOrderPreAuth` method to create a 2-step order.
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\OrderStatus;
 
-/** @var Client $client */
-$client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
+$client = new Client('username', 'password');
 
 $result = $client->getOrderStatus($orderId);
 
@@ -131,14 +124,15 @@ if (OrderStatus::isDeposited($result['orderStatus'])) {
 
 ### Getting an extended status of an exising order
 
+[getOrderStatusExtended.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended)
+
 ```php
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\OrderStatus;
 
-/** @var Client $client */
-$client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
+$client = new Client('userName', 'password');
 
 $result = $client->getOrderStatusExtended($orderId);
 
@@ -149,26 +143,28 @@ if (OrderStatus::isDeclined($result['orderStatus'])) {
 
 ### Reversing an exising order
 
+[reverse.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:reverse)
+
 ```php
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
 
-/** @var Client $client */
-$client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
+$client = new Client('username', 'password');
 
 $result = $client->reverseOrder($orderId);
 ```
 
 ### Refunding an exising order
 
+[refund.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:refund)
+
 ```php
 <?php
 
 use Voronkovich\SberbankAcquiring\Client;
 
-/** @var Client $client */
-$client = new Client([ 'userName' => 'userName', 'password' => 'password' ]);
+$client = new Client('username', 'password');
 
 $result = $client->refundOrder($orderId, $amountToRefund);
 ```

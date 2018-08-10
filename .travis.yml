@@ -3,27 +3,29 @@ sudo: false
 
 cache:
     directories:
-        - $HOME/.composer/cache/files
+        - $HOME/.composer
+        - $HOME/.phive
 
 matrix:
     fast_finish: true
     include:
-        - php: 5.3
-        - php: 5.4
-        - php: 5.5
-        - php: 5.6
-        - php: 7.0
-        - php: hhvm
+        - php: 7.1
+        - php: 7.2
+        - php: nightly
     allow_failures:
-        - php: hhvm
-        - php: 5.3
-        - php: 5.4
+        - php: 7.1
+        - php: nightly
 
 before_install:
     - composer self-update
+    - travis_retry wget https://phar.io/releases/phive.phar
+    - travis_retry wget https://phar.io/releases/phive.phar.asc
+    - travis_retry gpg --keyserver pool.sks-keyservers.net --recv-keys 0x9D8A98B29B2D5D79
+    - gpg --verify phive.phar.asc phive.phar
 
 install:
     - composer install
+    - travis_retry php phive.phar install --trust-gpg-keys 4AA394086372C20A,E82B2FB314E9906E
 
 script:
-    - vendor/bin/phpunit tests
+    - make build

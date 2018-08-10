@@ -240,13 +240,13 @@ class Client
     /**
      * Get last orders for merchants.
      *
-     * @param \DateTime      $from A begining date of a period
-     * @param \DateTime|null $to   An ending date of a period
+     * @param \DateTimeInterface      $from A begining date of a period
+     * @param \DateTimeInterface|null $to   An ending date of a period
      * @param array          $data Additional data
      *
      * @return array A server's response
      */
-    public function getLastOrdersForMerchants(\DateTime $from, \DateTime $to = null, array $data = []): array
+    public function getLastOrdersForMerchants(\DateTimeInterface $from, \DateTimeInterface $to = null, array $data = []): array
     {
         if (null === $to) {
             $to = new \DateTime();
@@ -347,13 +347,13 @@ class Client
     /**
      * Extend a binding.
      *
-     * @param int|string $bindingId  A binding identifier
-     * @param \DateTime  $newExprity A new expiration date
-     * @param array      $data       Additional data
+     * @param int|string          $bindingId  A binding identifier
+     * @param \DateTimeInterface  $newExprity A new expiration date
+     * @param array               $data       Additional data
      *
      * @return array A server's response
      */
-    public function extendBinding($bindingId, \DateTime $newExpiry, array $data = []): array
+    public function extendBinding($bindingId, \DateTimeInterface $newExpiry, array $data = []): array
     {
         $data['bindingId'] = $bindingId;
         $data['newExpiry'] = $newExpiry->format('Ym');

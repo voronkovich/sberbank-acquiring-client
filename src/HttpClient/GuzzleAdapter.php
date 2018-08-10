@@ -21,7 +21,7 @@ class GuzzleAdapter implements HttpClientInterface
         $this->client = $client;
     }
 
-    public function request($uri, $method = 'GET', array $headers = [], array $data = [])
+    public function request(string $uri, string $method = 'GET', array $headers = [], array $data = []): array
     {
         $response = $this->client->request($method, $uri, ['headers' => $headers, 'form_params' => $data]);
 

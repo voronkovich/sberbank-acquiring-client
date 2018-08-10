@@ -16,7 +16,7 @@ use Voronkovich\SberbankAcquiring\OrderStatus;
  * Client for working with Sberbanks's aquiring REST API.
  *
  * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
- * @see http://www.sberbank.ru/ru/s_m_business/bankingservice/internet_acquiring
+ * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest
  */
 class Client
 {

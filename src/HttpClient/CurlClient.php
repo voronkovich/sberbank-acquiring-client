@@ -35,7 +35,7 @@ class CurlClient implements HttpClientInterface
         return $this->curl;
     }
 
-    public function request($uri, $method = 'GET', array $headers = [], array $data = [])
+    public function request(string $uri, string $method = 'GET', array $headers = [], array $data = []): array
     {
         $data = http_build_query($data, '', '&');
 

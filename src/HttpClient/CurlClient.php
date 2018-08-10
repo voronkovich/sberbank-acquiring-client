@@ -32,7 +32,10 @@ class CurlClient implements HttpClientInterface
         $this->curlOptions = $curlOptions;
     }
 
-    private function getCurl(): resource
+    /**
+     * @return resource
+     */
+    private function getCurl()
     {
         if (null === $this->curl) {
             $this->curl = \curl_init();

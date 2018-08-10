@@ -103,9 +103,7 @@ Use a `registerOrderPreAuth` method to create a 2-step order.
 
 ### Getting a status of an exising order
 
-[getOrderStatus.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatus)
-
-**Never use this method**, because a Sberbank's gateway does'nt handle it properly, use a `getOrderStatusExtended` instead. For more information see a Sberbank's documentation.
+[getOrderStatusExtended.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended)
 
 ```php
 <?php
@@ -120,21 +118,6 @@ $result = $client->getOrderStatus($orderId);
 if (OrderStatus::isDeposited($result['orderStatus'])) {
     echo "Order #$orderId is deposited!";
 }
-```
-
-### Getting an extended status of an exising order
-
-[getOrderStatusExtended.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended)
-
-```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-use Voronkovich\SberbankAcquiring\OrderStatus;
-
-$client = new Client('userName', 'password');
-
-$result = $client->getOrderStatusExtended($orderId);
 
 if (OrderStatus::isDeclined($result['orderStatus'])) {
     echo "Order #$orderId was declined!";

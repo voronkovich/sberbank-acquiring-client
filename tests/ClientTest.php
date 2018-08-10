@@ -193,16 +193,6 @@ class ClientTest extends TestCase
         $client->getOrderStatus('aaa-bbb-yyy', ['currency' => 100]);
     }
 
-    public function testGetsAnExtendedOrderStatus()
-    {
-        $client = $this->getClientToTestSendingData([
-            'orderId' => 'aaa-bbb-yyy',
-            'currency' => 100,
-        ]);
-
-        $client->getOrderStatusExtended('aaa-bbb-yyy', ['currency' => 100]);
-    }
-
     public function testVerifiesACardEnrollment()
     {
         $client = $this->getClientToTestSendingData([

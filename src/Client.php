@@ -204,21 +204,6 @@ class Client
     {
         $data['orderId'] = $orderId;
 
-        return $this->execute('getOrderStatus.do', $data);
-    }
-
-    /**
-     * Get an existing order's extended status.
-     *
-     * @param int|string $orderId An order identifier
-     * @param array      $data    Additional data
-     *
-     * @return array A server's response
-     */
-    public function getOrderStatusExtended($orderId, array $data = []): array
-    {
-        $data['orderId'] = $orderId;
-
         return $this->execute('getOrderStatusExtended.do', $data);
     }
 

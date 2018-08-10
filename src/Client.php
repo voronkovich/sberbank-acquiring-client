@@ -429,13 +429,11 @@ class Client
      */
     private function parseResponse(string $response): array
     {
-        $response  = json_decode($response, true);
-        $errorCode = json_last_error();
+        $response  = \json_decode($response, true);
+        $errorCode = \json_last_error();
 
         if (\JSON_ERROR_NONE !== $errorCode || null === $response) {
-            $errorMessage = function_exists('json_last_error_msg') ? json_last_error_msg() : 'JSON parsing error.';
-
-            throw new ResponseParsingException($errorMessage, $errorCode);
+            throw new ResponseParsingException(\json_last_error_msg(), $errorCode);
         }
 
         return $response;

@@ -6,6 +6,9 @@ namespace Voronkovich\SberbankAcquiring\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\Exception\ActionException;
+use Voronkovich\SberbankAcquiring\Exception\BadResponseException;
+use Voronkovich\SberbankAcquiring\Exception\ResponseParsingException;
 use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
 
 /**
@@ -13,84 +16,27 @@ use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
  */
 class ClientTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function test_constructor_invalidHttpMethod()
+    public function testIsInstantiable()
     {
+        $client = new Client('oleg', 'qwerty123');
+
+        $this->assertInstanceOf(Client::class, $client);
+    }
+
+    public function testThrowsAnExceptionIfAnInvalidHttpMethodSpecified()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An HTTP method "PUT" is not supported. Use "GET" or "POST".');
+
         $client = new Client('oleg', 'qwerty123', ['httpMethod' => 'PUT']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function test_constructor_invalidHttpClient()
-    {
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => new \stdClass()]);
-    }
-
-    public function test_constructor_shouldCreateInstanceOfClientClass()
-    {
-        $client = new Client('oleg', 'qwerty123');
-
-        $this->assertInstanceOf('\Voronkovich\SberbankAcquiring\Client', $client);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function test_registerOrder_jsonParamsIsNotAnArray()
-    {
-        $client = new Client('oleg', 'qwerty123');
-
-        $client->registerOrder(1, 1, 'returnUrl', ['jsonParams' => '{}']);
-    }
-
-    /**
-     * @expectedException \Voronkovich\SberbankAcquiring\Exception\BadResponseException
-     */
-    public function test_execute_badResponse()
-    {
-        $httpClient = $this->mockHttpClient([500, 'Internal server error.']);
-
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
-
-        $client->execute('testAction');
-    }
-
-    /**
-     * @expectedException \Voronkovich\SberbankAcquiring\Exception\ResponseParsingException
-     */
-    public function test_execute_malformedJsonResponse()
-    {
-        $httpClient = $this->mockHttpClient([200, 'Malformed json!']);
-
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
-
-        $client->execute('testAction');
-    }
-
-    /**
-     * @expectedException \Voronkovich\SberbankAcquiring\Exception\ActionException
-     * @expectedExceptionMessage Error!
-     */
-    public function test_execute_actionError()
-    {
-        $response = [200, json_encode(['errorCode' => 100, 'errorMessage' => 'Error!'])];
-
-        $httpClient = $this->mockHttpClient($response);
-
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
-
-        $client->execute('testAction');
-    }
-
-    public function test_usingCustomHttpClient()
+    public function testAllowsToUseACustomHttpClient()
     {
         $httpClient = $this->mockHttpClient();
 
         $httpClient
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('request')
         ;
 
@@ -99,7 +45,15 @@ class ClientTest extends TestCase
         $client->execute('testAction');
     }
 
-    public function test_settingHttpMethodAndApiUrl()
+    public function testThrowsAnExceptionIfAnInvalidHttpClientSpecified()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An HTTP client must implement HttpClientInterface.');
+
+        $client = new Client('oleg', 'qwerty123', ['httpClient' => new \stdClass()]);
+    }
+
+    public function testAllowsToSetAnHttpMethodAndApiUrl()
     {
         $httpClient = $this->mockHttpClient();
 
@@ -118,7 +72,44 @@ class ClientTest extends TestCase
         $client->execute('testAction');
     }
 
-    public function test_registerOrder_sendingData()
+    public function testThrowsAnExceptionIfABadResponseReturned()
+    {
+        $httpClient = $this->mockHttpClient([500, 'Internal server error.']);
+
+        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+
+        $this->expectException(BadResponseException::class);
+        $this->expectExceptionMessage('Bad HTTP code: 500.');
+
+        $client->execute('testAction');
+    }
+
+    public function testThrowsAnExceptionIfAMalformedJsonReturned()
+    {
+        $httpClient = $this->mockHttpClient([200, 'Malformed json!']);
+
+        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+
+        $this->expectException(ResponseParsingException::class);
+
+        $client->execute('testAction');
+    }
+
+    public function testThrowsAnExceptionIfAServerSetAnErrorCode()
+    {
+        $response = [200, \json_encode(['errorCode' => 100, 'errorMessage' => 'Error!'])];
+
+        $httpClient = $this->mockHttpClient($response);
+
+        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+
+        $this->expectException(ActionException::class);
+        $this->expectExceptionMessage('Error!');
+
+        $client->execute('testAction');
+    }
+
+    public function testRegistersANewOrder()
     {
         $client = $this->getClientToTestSendingData([
             'orderNumber' => 'eee-eee-eee',
@@ -130,7 +121,7 @@ class ClientTest extends TestCase
         $client->registerOrder('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
     }
 
-    public function test_registerOrderPreAuth_sendingData()
+    public function testRegisterANewPreAuthorizedOrder()
     {
         $client = $this->getClientToTestSendingData([
             'orderNumber' => 'eee-eee-eee',
@@ -142,7 +133,25 @@ class ClientTest extends TestCase
         $client->registerOrderPreAuth('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
     }
 
-    public function test_deposit_sendingData()
+    /**
+     * @testdox Throws an exception if a "jsonParams" is not an array.
+     */
+    public function testThrowsAnExceptionIfAJsonParamsIsNotAnArray()
+    {
+        $client = new Client('oleg', 'qwerty123');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "jsonParams" parameter must be an array.');
+
+        $client->registerOrder(1, 1, 'returnUrl', ['jsonParams' => '{}']);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "jsonParams" parameter must be an array.');
+
+        $client->registerOrderPreAuth(1, 1, 'returnUrl', ['jsonParams' => '{}']);
+    }
+
+    public function testDepositsAPreAuthorizedOrder()
     {
         $client = $this->getClientToTestSendingData([
             'orderId' => 'aaa-bbb-yyy',
@@ -153,7 +162,7 @@ class ClientTest extends TestCase
         $client->deposit('aaa-bbb-yyy', 1000, ['currency' => 810]);
     }
 
-    public function test_reverseOrder_sendingData()
+    public function testReversesAnOrder()
     {
         $client = $this->getClientToTestSendingData([
             'orderId' => 'aaa-bbb-yyy',
@@ -163,7 +172,7 @@ class ClientTest extends TestCase
         $client->reverseOrder('aaa-bbb-yyy', ['currency' => 480]);
     }
 
-    public function test_refundOrder_sendingData()
+    public function testRefundsAnOrder()
     {
         $client = $this->getClientToTestSendingData([
             'orderId' => 'aaa-bbb-yyy',
@@ -174,7 +183,7 @@ class ClientTest extends TestCase
         $client->refundOrder('aaa-bbb-yyy', 5050, ['currency' => 456]);
     }
 
-    public function test_getOrderStatus_sendingData()
+    public function testGetsAnOrderStatus()
     {
         $client = $this->getClientToTestSendingData([
             'orderId' => 'aaa-bbb-yyy',
@@ -184,7 +193,7 @@ class ClientTest extends TestCase
         $client->getOrderStatus('aaa-bbb-yyy', ['currency' => 100]);
     }
 
-    public function test_getOrderStatusExtended_sendingData()
+    public function testGetsAnExtendedOrderStatus()
     {
         $client = $this->getClientToTestSendingData([
             'orderId' => 'aaa-bbb-yyy',
@@ -194,7 +203,7 @@ class ClientTest extends TestCase
         $client->getOrderStatusExtended('aaa-bbb-yyy', ['currency' => 100]);
     }
 
-    public function test_verifyEnrollment_sendingData()
+    public function testVerifiesACardEnrollment()
     {
         $client = $this->getClientToTestSendingData([
             'pan' => 'aaazzz',
@@ -204,7 +213,7 @@ class ClientTest extends TestCase
         $client->verifyEnrollment('aaazzz', ['currency' => 200]);
     }
 
-    public function test_paymentOrderBinding_sendingData()
+    public function testPaysAnOrderUsingBinding()
     {
         $client = $this->getClientToTestSendingData([
             'mdOrder' => 'xxx-yyy-zzz',
@@ -215,7 +224,7 @@ class ClientTest extends TestCase
         $client->paymentOrderBinding('xxx-yyy-zzz', '600', ['language' => 'en']);
     }
 
-    public function test_bindCard_sendingData()
+    public function testBindsACard()
     {
         $client = $this->getClientToTestSendingData([
             'bindingId' => 'bbb000',
@@ -225,7 +234,7 @@ class ClientTest extends TestCase
         $client->bindCard('bbb000', ['language' => 'ru']);
     }
 
-    public function test_unBindCard_sendingData()
+    public function testUnbindsACard()
     {
         $client = $this->getClientToTestSendingData([
             'bindingId' => 'uuu800',
@@ -235,7 +244,7 @@ class ClientTest extends TestCase
         $client->unBindCard('uuu800', ['language' => 'en']);
     }
 
-    public function test_extendBinding_sendingData()
+    public function testExtendsABinding()
     {
         $client = $this->getClientToTestSendingData([
             'bindingId' => 'eeeB00',
@@ -246,7 +255,7 @@ class ClientTest extends TestCase
         $client->extendBinding('eeeB00', new \DateTime('2030-09'), ['language' => 'ru']);
     }
 
-    public function test_getBindings_sendingData()
+    public function testGetsBindings()
     {
         $client = $this->getClientToTestSendingData([
             'clientId' => 'clientIDABC',
@@ -261,7 +270,7 @@ class ClientTest extends TestCase
         $httpClient = $this->createMock(HttpClientInterface::class);
 
         if (null === $response) {
-            $response = [200, json_encode(['errorCode' => 0, 'errorMessage' => 'No error.'])];
+            $response = [200, \json_encode(['errorCode' => 0, 'errorMessage' => 'No error.'])];
         }
 
         $httpClient

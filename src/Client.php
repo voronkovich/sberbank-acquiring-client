@@ -54,7 +54,7 @@ class Client
      *
      * @var string
      */
-    private $httpMethod = 'POST';
+    private $httpMethod = HttpClientInterface::METHOD_GET;
 
     private $dateFormat = 'YmdHis';
 
@@ -76,8 +76,15 @@ class Client
         $this->apiUri = $settings['apiUri'] ?? self::API_URI;
 
         if (isset($settings['httpMethod'])) {
-            if (!in_array($settings['httpMethod'], [ 'GET', 'POST' ])) {
-                throw new \InvalidArgumentException(sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $settings['httpMethod']));
+            if (!\in_array($settings['httpMethod'], [ HttpClientInterface::METHOD_GET, HttpClientInterface::METHOD_POST ])) {
+                throw new \InvalidArgumentException(
+                    \sprintf(
+                        'An HTTP method "%s" is not supported. Use "%s" or "%s".',
+                        $settings['httpMethod'],
+                        HttpClientInterface::METHOD_GET,
+                        HttpClientInterface::METHOD_POST
+                    )
+                );
             }
 
             $this->httpMethod = $settings['httpMethod'];

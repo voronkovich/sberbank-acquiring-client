@@ -45,19 +45,26 @@ class CurlClient implements HttpClientInterface
         return $this->curl;
     }
 
-    public function request(string $uri, string $method = 'GET', array $headers = [], array $data = []): array
+    public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], array $data = []): array
     {
         $data = \http_build_query($data, '', '&');
 
-        if ('GET' === $method) {
+        if (HttpClientInterface::METHOD_GET === $method) {
             $curlOptions[\CURLOPT_HTTPGET] = true;
             $curlOptions[\CURLOPT_URL] = $uri . '?' . $data;
-        } elseif ('POST' === $method) {
+        } elseif (HttpClientInterface::METHOD_POST === $method) {
             $curlOptions[\CURLOPT_POST] = true;
             $curlOptions[\CURLOPT_URL] = $uri;
             $curlOptions[\CURLOPT_POSTFIELDS] = $data;
         } else {
-            throw new \InvalidArgumentException(\sprintf('An HTTP method "%s" is not supported. Use "GET" or "POST".', $method));
+            throw new \InvalidArgumentException(
+                \sprintf(
+                    'An HTTP method "%s" is not supported. Use "%s" or "%s".',
+                    $method,
+                    HttpClientInterface::METHOD_GET,
+                    HttpClientInterface::METHOD_POST
+                )
+            );
         }
 
         $curlOptions[\CURLOPT_HTTPHEADER] = $headers;

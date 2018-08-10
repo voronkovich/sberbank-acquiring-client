@@ -13,6 +13,9 @@ use Voronkovich\SberbankAcquiring\Exception\NetworkException;
  */
 interface HttpClientInterface
 {
+    const METHOD_GET = 'GET';
+    const METHOD_POST = 'POST';
+
     /**
      * Send an HTTP request.
      *
@@ -20,5 +23,5 @@ interface HttpClientInterface
      *
      * @return array A response
      */
-    public function request(string $uri, string $method = 'GET', array $headers = [], array $data = []): array;
+    public function request(string $uri, string $method = self::METHOD_GET, array $headers = [], array $data = []): array;
 }

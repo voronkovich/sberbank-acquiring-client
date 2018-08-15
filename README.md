@@ -2,6 +2,12 @@
 
 PHP client for [Sberbank's acquiring](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest) REST API.
 
+## Requirements
+
+- PHP 7.1 or above (Old version for PHP 5 you can find [here](https://github.com/voronkovich/sberbank-acquiring-client/tree/1.x))
+- TLS 1.2 or above (more information you can find [here](https://civicrm.org/blog/yashodha/are-you-ready-for-tls-12-update-cant-escape-it))
+- `php-json` extension installed
+
 ## Installation
 
 ```sh
@@ -20,6 +26,14 @@ In most cases to instantiate a client you need to pass your username and passwor
 use Voronkovich\SberbankAcquiring\Client;
 
 $client = new Client(['userName' => 'username', 'password' => 'password']);
+```
+Alternatively you can use an authentication token:
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+$client = new Client(['token' => 'sberbank-token']);
 ```
 
 More advanced example:
@@ -74,6 +88,22 @@ $client = new Client(
     'httpClient' => new GuzzleAdapter(new Guzzle()),
 ]);
 ```
+
+### Low level method "execute"
+
+You can interact with the Sberbank REST API using a low level method `execute`:
+```php
+$client->execute('register.do', [ 
+    'orderNumber' => 1111,
+    'amount' => 10,
+    'returnUrl' => 'http://localhost/sberbank/success',
+]);
+
+$status = $client->execute('getOrderStatusExtended.do', [
+    'orderId' => '64fc8831-a2b0-721b-64fc-883100001553',
+]);
+```
+But it's more convenient to use one of the shortcuts listed below.
 
 ### Creating a new order
 

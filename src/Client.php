@@ -150,6 +150,8 @@ class Client
     /**
      * Register a new order.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:register
+     *
      * @param int|string $orderId   An order identifier
      * @param int        $amount    An order amount
      * @param string     $returnUrl An url for redirecting a user after successfull order handling
@@ -164,6 +166,8 @@ class Client
 
     /**
      * Register a new order using a 2-step payment process.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:registerpreauth
      *
      * @param int|string $orderId   An order identifier
      * @param int        $amount    An order amount
@@ -201,6 +205,8 @@ class Client
     /**
      * Deposit an existing order.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:deposit
+     *
      * @param int|string $orderId An order identifier
      * @param int        $amount  An order amount
      * @param array      $data    Additional data
@@ -218,6 +224,8 @@ class Client
     /**
      * Reverse an existing order.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:reverse
+     *
      * @param int|string $orderId An order identifier
      * @param array      $data    Additional data
      *
@@ -232,6 +240,8 @@ class Client
 
     /**
      * Refund an existing order.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:refund
      *
      * @param int|string $orderId An order identifier
      * @param int        $amount  An amount to refund
@@ -250,6 +260,8 @@ class Client
     /**
      * Get an existing order's status.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended
+     *
      * @param int|string $orderId An order identifier
      * @param array      $data    Additional data
      *
@@ -265,6 +277,8 @@ class Client
     /**
      * Verify card enrollment in the 3DS.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:verifyEnrollment
+     *
      * @param string $pan  A primary account number
      * @param array  $data Additional data
      *
@@ -279,6 +293,8 @@ class Client
 
     /**
      * Get last orders for merchants.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getLastOrdersForMerchants
      *
      * @param \DateTimeInterface      $from A begining date of a period
      * @param \DateTimeInterface|null $to   An ending date of a period
@@ -340,6 +356,8 @@ class Client
     /**
      * Payment order binding.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:paymentOrderBinding
+     *
      * @param int|string $orderId   An order identifier
      * @param int|string $bindingId A binding identifier
      * @param array      $data      Additional data
@@ -357,6 +375,8 @@ class Client
     /**
      * Activate a binding.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:bindCard
+     *
      * @param int|string $bindingId A binding identifier
      * @param array      $data      Additional data
      *
@@ -372,6 +392,8 @@ class Client
     /**
      * Deactivate a binding.
      *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:unBindCard
+     *
      * @param int|string $bindingId A binding identifier
      * @param array      $data      Additional data
      *
@@ -386,6 +408,8 @@ class Client
 
     /**
      * Extend a binding.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:extendBinding
      *
      * @param int|string          $bindingId  A binding identifier
      * @param \DateTimeInterface  $newExprity A new expiration date
@@ -403,6 +427,8 @@ class Client
 
     /**
      * Get bindings.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getBindings
      *
      * @param int|string $clientId A binding identifier
      * @param array      $data     Additional data

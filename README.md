@@ -19,7 +19,7 @@ In most cases to instantiate a client you need to pass your username and passwor
 
 use Voronkovich\SberbankAcquiring\Client;
 
-$client = new Client('username', 'password');
+$client = new Client(['userName' => 'username', 'password' => 'password']);
 ```
 
 More advanced example:
@@ -29,8 +29,11 @@ More advanced example:
 
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\Currency;
+use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
 
-$client = new Client('username', 'password', [
+$client = new Client([
+    'userName' => 'username',
+    'password' => 'password',
     // A language code in ISO 639-1 format.
     // Use this option to set a language of error messages.
     'language' => 'ru',
@@ -45,7 +48,7 @@ $client = new Client('username', 'password', [
 
     // An HTTP method to use in requests.
     // Must be "GET" or "POST" ("POST" is used by default).
-    'httpMethod' => 'GET',
+    'httpMethod' => HttpClientInterface::METHOD_GET,
 
     // An HTTP client for sending requests.
     // Use this option when you don't want to use
@@ -65,7 +68,9 @@ use Voronkovich\SberbankAcquiring\HttpClient\GuzzleAdapter;
 
 use GuzzleHttp\Client as Guzzle;
 
-$client = new Client('username', 'password', [
+$client = new Client(
+    'userName' => 'username',
+    'password' => 'password',
     'httpClient' => new GuzzleAdapter(new Guzzle()),
 ]);
 ```
@@ -80,7 +85,7 @@ $client = new Client('username', 'password', [
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\Currency;
 
-$client = new Client('username', 'password');
+$client = new Client(['userName' => 'username', 'password' => 'password']);
 
 // Required arguments
 $orderId     = 1234;
@@ -120,7 +125,7 @@ Use a `registerOrderPreAuth` method to create a 2-step order.
 use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\OrderStatus;
 
-$client = new Client('username', 'password');
+$client = new Client(['userName' => 'username', 'password' => 'password']);
 
 $result = $client->getOrderStatus($orderId);
 
@@ -142,7 +147,7 @@ if (OrderStatus::isDeclined($result['orderStatus'])) {
 
 use Voronkovich\SberbankAcquiring\Client;
 
-$client = new Client('username', 'password');
+$client = new Client(['userName' => 'username', 'password' => 'password']);
 
 $result = $client->reverseOrder($orderId);
 ```
@@ -156,7 +161,7 @@ $result = $client->reverseOrder($orderId);
 
 use Voronkovich\SberbankAcquiring\Client;
 
-$client = new Client('username', 'password');
+$client = new Client(['userName' => 'username', 'password' => 'password']);
 
 $result = $client->refundOrder($orderId, $amountToRefund);
 ```

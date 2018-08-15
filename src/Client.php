@@ -25,8 +25,22 @@ class Client
     const API_URI      = 'https://securepayments.sberbank.ru/payment/rest/';
     const API_URI_TEST = 'https://3dsec.sberbank.ru/payment/rest/';
 
-    private $userName = '';
-    private $password = '';
+    /**
+     * @var string
+     */
+    private $userName;
+
+    /**
+     * @var string
+     */
+    private $password;
+
+    /**
+     * Authentication token.
+     *
+     * @var string
+     */
+    private $token;
 
     /**
      * Currency code in ISO 4217 format.
@@ -63,14 +77,21 @@ class Client
      */
     private $httpClient;
 
-    public function __construct(string $username, string $password, array $settings = [])
+    public function __construct(array $settings = [])
     {
         if (!\extension_loaded('json')) {
             throw new \RuntimeException('JSON extension is not loaded.');
         }
 
-        $this->userName = $username;
-        $this->password = $password;
+        if (isset($settings['userName']) && isset($settings['password'])) {
+            $this->userName = $settings['userName'];
+            $this->password = $settings['password'];
+        } elseif (isset($settings['token'])) {
+            $this->token = $settings['token'];
+        } else {
+            throw new \InvalidArgumentException('You must provide authentication credentials: "userName" and "password", or "token".');
+        }
+
         $this->language = $settings['language'] ?? null;
         $this->currency = $settings['currency'] ?? null;
         $this->apiUri = $settings['apiUri'] ?? self::API_URI;
@@ -386,8 +407,12 @@ class Client
             'Cache-Control: no-cache',
         ];
 
-        $data['userName'] = $this->userName;
-        $data['password'] = $this->password;
+        if (null !== $this->token) {
+            $data['token'] = $this->token;
+        } else {
+            $data['userName'] = $this->userName;
+            $data['password'] = $this->password;
+        }
 
         if (!isset($data['language']) && null !== $this->language) {
             $data['language'] = $this->language;

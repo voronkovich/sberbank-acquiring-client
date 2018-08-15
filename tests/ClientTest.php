@@ -16,11 +16,57 @@ use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
  */
 class ClientTest extends TestCase
 {
-    public function testIsInstantiable()
+    public function testAllowsToUseAUsernameAndAPasswordForAuthentication()
     {
-        $client = new Client('oleg', 'qwerty123');
+        $httpClient = $this->mockHttpClient();
+        $httpClient
+            ->expects($this->atLeastOnce())
+            ->method('request')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->equalTo([
+                    'userName' => 'oleg',
+                    'password' => 'querty123',
+                    'anything' => 'anything',
+                ])
+            )
+        ;
 
-        $this->assertInstanceOf(Client::class, $client);
+        $client = new Client(['userName' => 'oleg', 'password' => 'querty123', 'httpClient' => $httpClient]);
+
+        $client->execute('somethig.do', ['anything' => 'anything']);
+    }
+
+    public function testAllowsToUseATokenForAuthentication()
+    {
+        $httpClient = $this->mockHttpClient();
+        $httpClient
+            ->expects($this->atLeastOnce())
+            ->method('request')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->equalTo([
+                    'token' => 'querty123',
+                    'anything' => 'anything',
+                ])
+            )
+        ;
+
+        $client = new Client(['token' => 'querty123', 'httpClient' => $httpClient]);
+
+        $client->execute('somethig.do', ['anything' => 'anything']);
+    }
+
+    public function testThrowsAnExceptionIfNoCredentialsProvided()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('You must provide authentication credentials: "userName" and "password", or "token".');
+
+        $client = new Client();
     }
 
     public function testThrowsAnExceptionIfAnInvalidHttpMethodSpecified()
@@ -28,7 +74,11 @@ class ClientTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('An HTTP method "PUT" is not supported. Use "GET" or "POST".');
 
-        $client = new Client('oleg', 'qwerty123', ['httpMethod' => 'PUT']);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpMethod' => 'PUT'
+        ]);
     }
 
     public function testAllowsToUseACustomHttpClient()
@@ -40,7 +90,11 @@ class ClientTest extends TestCase
             ->method('request')
         ;
 
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient
+        ]);
 
         $client->execute('testAction');
     }
@@ -50,7 +104,11 @@ class ClientTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('An HTTP client must implement HttpClientInterface.');
 
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => new \stdClass()]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => new \stdClass(),
+        ]);
     }
 
     public function testAllowsToSetAnHttpMethodAndApiUrl()
@@ -63,7 +121,9 @@ class ClientTest extends TestCase
             ->with('/api/rest/testAction', 'GET')
         ;
 
-        $client = new Client('oleg', 'qwerty123', [
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
             'httpClient' => $httpClient,
             'httpMethod' => 'GET',
             'apiUri' => '/api/rest/',
@@ -76,7 +136,11 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->mockHttpClient([500, 'Internal server error.']);
 
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ]);
 
         $this->expectException(BadResponseException::class);
         $this->expectExceptionMessage('Bad HTTP code: 500.');
@@ -88,7 +152,11 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->mockHttpClient([200, 'Malformed json!']);
 
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+        ]);
 
         $this->expectException(ResponseParsingException::class);
 
@@ -101,7 +169,11 @@ class ClientTest extends TestCase
 
         $httpClient = $this->mockHttpClient($response);
 
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient
+        ]);
 
         $this->expectException(ActionException::class);
         $this->expectExceptionMessage('Error!');
@@ -138,7 +210,7 @@ class ClientTest extends TestCase
      */
     public function testThrowsAnExceptionIfAJsonParamsIsNotAnArray()
     {
-        $client = new Client('oleg', 'qwerty123');
+        $client = new Client(['userName' => 'oleg', 'password' => 'qwerty123']);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The "jsonParams" parameter must be an array.');
@@ -284,7 +356,11 @@ class ClientTest extends TestCase
             ->with($this->anything(), $this->anything(), $this->anything(), $this->equalTo($data))
         ;
 
-        $client = new Client('oleg', 'qwerty123', ['httpClient' => $httpClient]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient
+        ]);
 
         return $client;
     }

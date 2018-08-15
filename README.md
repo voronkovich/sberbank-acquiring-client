@@ -99,6 +99,15 @@ $paymentFormUrl = $result['formUrl'];
 header('Location: ' . $paymentFormUrl);
 ```
 
+If you want to use UUID identifiers ([ramsey/uuid](https://github.com/ramsey/uuid)) for orders you should convert them to a hex format:
+```php
+use Ramsey\Uuid\Uuid;
+
+$orderId = Uuid::uuid4();
+
+$result = $client->registerOrder($orderId->getHex(), $orderAmount, $returnUrl);
+```
+
 Use a `registerOrderPreAuth` method to create a 2-step order.
 
 ### Getting a status of an exising order

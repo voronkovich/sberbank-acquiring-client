@@ -77,7 +77,7 @@ class Client
      */
     private $httpClient;
 
-    public function __construct(array $settings = [])
+    public function __construct(array $options = [])
     {
         if (!\extension_loaded('json')) {
             throw new \RuntimeException('JSON extension is not loaded.');
@@ -94,7 +94,7 @@ class Client
             'userName',
         ];
 
-        $unknownOptions = \array_diff(\array_keys($settings), $allowedOptions);
+        $unknownOptions = \array_diff(\array_keys($options), $allowedOptions);
 
         if (!empty($unknownOptions)) {
             throw new \InvalidArgumentException(
@@ -106,44 +106,44 @@ class Client
             );
         }
 
-        if (isset($settings['userName']) && isset($settings['password'])) {
-            if (isset($settings['token'])) {
+        if (isset($options['userName']) && isset($options['password'])) {
+            if (isset($options['token'])) {
                 throw new \InvalidArgumentException('You can use either "userName" and "password" or "token".');
             }
 
-            $this->userName = $settings['userName'];
-            $this->password = $settings['password'];
-        } elseif (isset($settings['token'])) {
-            $this->token = $settings['token'];
+            $this->userName = $options['userName'];
+            $this->password = $options['password'];
+        } elseif (isset($options['token'])) {
+            $this->token = $options['token'];
         } else {
             throw new \InvalidArgumentException('You must provide authentication credentials: "userName" and "password", or "token".');
         }
 
-        $this->language = $settings['language'] ?? null;
-        $this->currency = $settings['currency'] ?? null;
-        $this->apiUri = $settings['apiUri'] ?? self::API_URI;
+        $this->language = $options['language'] ?? null;
+        $this->currency = $options['currency'] ?? null;
+        $this->apiUri = $options['apiUri'] ?? self::API_URI;
 
-        if (isset($settings['httpMethod'])) {
-            if (!\in_array($settings['httpMethod'], [ HttpClientInterface::METHOD_GET, HttpClientInterface::METHOD_POST ])) {
+        if (isset($options['httpMethod'])) {
+            if (!\in_array($options['httpMethod'], [ HttpClientInterface::METHOD_GET, HttpClientInterface::METHOD_POST ])) {
                 throw new \InvalidArgumentException(
                     \sprintf(
                         'An HTTP method "%s" is not supported. Use "%s" or "%s".',
-                        $settings['httpMethod'],
+                        $options['httpMethod'],
                         HttpClientInterface::METHOD_GET,
                         HttpClientInterface::METHOD_POST
                     )
                 );
             }
 
-            $this->httpMethod = $settings['httpMethod'];
+            $this->httpMethod = $options['httpMethod'];
         }
 
-        if (isset($settings['httpClient'])) {
-            if (!$settings['httpClient'] instanceof HttpClientInterface) {
+        if (isset($options['httpClient'])) {
+            if (!$options['httpClient'] instanceof HttpClientInterface) {
                 throw new \InvalidArgumentException('An HTTP client must implement HttpClientInterface.');
             }
 
-            $this->httpClient = $settings['httpClient'];
+            $this->httpClient = $options['httpClient'];
         }
     }
 

@@ -107,6 +107,10 @@ class Client
         }
 
         if (isset($settings['userName']) && isset($settings['password'])) {
+            if (isset($settings['token'])) {
+                throw new \InvalidArgumentException('You can use either "userName" and "password" or "token".');
+            }
+
             $this->userName = $settings['userName'];
             $this->password = $settings['password'];
         } elseif (isset($settings['token'])) {

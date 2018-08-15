@@ -16,6 +16,14 @@ use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
  */
 class ClientTest extends TestCase
 {
+    public function testThrowsAnExceptionIfUnkownOptionProvided()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown option "foo".');
+
+        $client = new Client(['token' => 'token', 'foo' => 'bar']);
+    }
+
     public function testAllowsToUseAUsernameAndAPasswordForAuthentication()
     {
         $httpClient = $this->mockHttpClient();
@@ -61,12 +69,12 @@ class ClientTest extends TestCase
         $client->execute('somethig.do', ['anything' => 'anything']);
     }
 
-    public function testThrowsAnExceptionIfUnkownOptionProvided()
+    public function testThrowsAnExceptionIfBothAPasswordAndATokenUsed()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown option "foo".');
+        $this->expectExceptionMessage('You can use either "userName" and "password" or "token".');
 
-        $client = new Client(['token' => 'token', 'foo' => 'bar']);
+        $client = new Client(['userName' => 'username', 'password' => 'password', 'token' => 'token']);
     }
 
     public function testThrowsAnExceptionIfNoCredentialsProvided()

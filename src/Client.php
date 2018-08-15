@@ -83,6 +83,29 @@ class Client
             throw new \RuntimeException('JSON extension is not loaded.');
         }
 
+        $allowedOptions = [
+            'apiUri',
+            'currency',
+            'httpClient',
+            'httpMethod',
+            'language',
+            'password',
+            'token',
+            'userName',
+        ];
+
+        $unknownOptions = \array_diff(\array_keys($settings), $allowedOptions);
+
+        if (!empty($unknownOptions)) {
+            throw new \InvalidArgumentException(
+                \sprintf(
+                    'Unknown option "%s". Allowed options: "%s".',
+                    \reset($unknownOptions),
+                    \implode('", "', $allowedOptions)
+                )
+            );
+        }
+
         if (isset($settings['userName']) && isset($settings['password'])) {
             $this->userName = $settings['userName'];
             $this->password = $settings['password'];

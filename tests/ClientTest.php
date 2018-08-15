@@ -61,6 +61,14 @@ class ClientTest extends TestCase
         $client->execute('somethig.do', ['anything' => 'anything']);
     }
 
+    public function testThrowsAnExceptionIfUnkownOptionProvided()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown option "foo".');
+
+        $client = new Client(['token' => 'token', 'foo' => 'bar']);
+    }
+
     public function testThrowsAnExceptionIfNoCredentialsProvided()
     {
         $this->expectException(\InvalidArgumentException::class);

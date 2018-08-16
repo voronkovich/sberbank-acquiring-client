@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Voronkovich\SberbankAcquiring\HttpClient;
 
 use GuzzleHttp\ClientInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Adapter for the guzzle.
@@ -25,6 +26,9 @@ class GuzzleAdapter implements HttpClientInterface
     {
         $response = $this->client->request($method, $uri, ['headers' => $headers, 'form_params' => $data]);
 
-        return [$response->getStatusCode(), $response->getBody()];
+        $statusCode = $response->getStatusCode();
+        $body = $response instanceof ResponseInterface ? $response->getBody()->getContents() : $response->getBody();
+
+        return [$statusCode, $body];
     }
 }

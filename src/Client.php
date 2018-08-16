@@ -68,7 +68,7 @@ class Client
      *
      * @var string
      */
-    private $httpMethod = HttpClientInterface::METHOD_GET;
+    private $httpMethod = HttpClientInterface::METHOD_POST;
 
     private $dateFormat = 'YmdHis';
 

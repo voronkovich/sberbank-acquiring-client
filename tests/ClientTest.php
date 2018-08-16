@@ -127,6 +127,29 @@ class ClientTest extends TestCase
         ]);
     }
 
+    /**
+     * @testdox Uses an HTTP method POST by default
+     */
+    public function testUsesAPostHttpMethodByDefault()
+    {
+        $httpClient = $this->mockHttpClient();
+
+        $httpClient
+            ->expects($this->atLeastOnce())
+            ->method('request')
+            ->with('/api/rest/testAction', 'POST')
+        ;
+
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'qwerty123',
+            'httpClient' => $httpClient,
+            'apiUri' => '/api/rest/',
+        ]);
+
+        $client->execute('testAction');
+    }
+
     public function testAllowsToSetAnHttpMethodAndApiUrl()
     {
         $httpClient = $this->mockHttpClient();

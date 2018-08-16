@@ -24,10 +24,38 @@ class GuzzleAdapter implements HttpClientInterface
 
     public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], array $data = []): array
     {
-        $response = $this->client->request($method, $uri, ['headers' => $headers, 'form_params' => $data]);
+        $guzzleVersion = (int) $this->client::VERSION;
+
+        $options = ['headers' => $headers];
+
+        switch ($method) {
+            case HttpClientInterface::METHOD_GET:
+                $options['query'] = $data;
+                break;
+            case HttpClientInterface::METHOD_POST:
+                $options[6 > $guzzleVersion ? 'body' : 'form_params'] = $data;
+                break;
+            default:
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Invalid HTTP method "%s". Use "%s" or "%s".',
+                        $method,
+                        HttpClientInterface::METHOD_GET,
+                        HttpClientInterface::METHOD_POST
+                    )
+                );
+                break;
+        }
+
+        if (6 > $guzzleVersion) {
+            $request = $this->client->createRequest($method, $uri, $options);
+            $response = $this->client->send($request);
+        } else {
+            $response = $this->client->request($method, $uri, $options);
+        }
 
         $statusCode = $response->getStatusCode();
-        $body = $response instanceof ResponseInterface ? $response->getBody()->getContents() : $response->getBody();
+        $body = $response->getBody()->getContents();
 
         return [$statusCode, $body];
     }

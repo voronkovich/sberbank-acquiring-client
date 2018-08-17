@@ -5,7 +5,7 @@ PHP client for [Sberbank's acquiring](http://data.sberbank.ru/en/s_m_business/ba
 ## Installation
 
 ```sh
-composer require 'voronkovich/sberbank-acquiring-client'
+composer require 'voronkovich/sberbank-acquiring-client:^1'
 ```
 
 ## Usage

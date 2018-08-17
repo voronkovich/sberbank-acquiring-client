@@ -34,17 +34,17 @@ class ClientTest extends TestCase
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
-                $this->equalTo([
-                    'userName' => 'oleg',
-                    'password' => 'querty123',
-                    'anything' => 'anything',
-                ])
+                $this->equalTo('anything=anything&userName=oleg&password=querty123')
             )
         ;
 
-        $client = new Client(['userName' => 'oleg', 'password' => 'querty123', 'httpClient' => $httpClient]);
+        $client = new Client([
+            'userName' => 'oleg',
+            'password' => 'querty123',
+            'httpClient' => $httpClient,
+        ]);
 
-        $client->execute('somethig.do', ['anything' => 'anything']);
+        $client->execute('/payment/rest/somethig.do', ['anything' => 'anything']);
     }
 
     public function testAllowsToUseATokenForAuthentication()
@@ -57,16 +57,16 @@ class ClientTest extends TestCase
                 $this->anything(),
                 $this->anything(),
                 $this->anything(),
-                $this->equalTo([
-                    'token' => 'querty123',
-                    'anything' => 'anything',
-                ])
+                $this->equalTo('anything=anything&token=querty123')
             )
         ;
 
-        $client = new Client(['token' => 'querty123', 'httpClient' => $httpClient]);
+        $client = new Client([
+            'token' => 'querty123',
+            'httpClient' => $httpClient,
+        ]);
 
-        $client->execute('somethig.do', ['anything' => 'anything']);
+        $client->execute('/payment/rest/somethig.do', ['anything' => 'anything']);
     }
 
     public function testThrowsAnExceptionIfBothAPasswordAndATokenUsed()
@@ -137,17 +137,21 @@ class ClientTest extends TestCase
         $httpClient
             ->expects($this->atLeastOnce())
             ->method('request')
-            ->with('/api/rest/testAction', 'POST')
+            ->with(
+                $this->anything(),
+                HttpClientInterface::METHOD_POST,
+                $this->anything(),
+                $this->anything()
+            )
         ;
 
         $client = new Client([
             'userName' => 'oleg',
             'password' => 'qwerty123',
             'httpClient' => $httpClient,
-            'apiUri' => '/api/rest/',
         ]);
 
-        $client->execute('testAction');
+        $client->execute('/payment/rest/testAction.do');
     }
 
     public function testAllowsToSetAnHttpMethodAndApiUrl()
@@ -157,18 +161,21 @@ class ClientTest extends TestCase
         $httpClient
             ->expects($this->once())
             ->method('request')
-            ->with('/api/rest/testAction', 'GET')
+            ->with(
+                'https://github.com/voronkovich/sberbank-acquiring-client/payment/rest/testAction.do',
+                HttpClientInterface::METHOD_GET
+            )
         ;
 
         $client = new Client([
             'userName' => 'oleg',
             'password' => 'qwerty123',
             'httpClient' => $httpClient,
-            'httpMethod' => 'GET',
-            'apiUri' => '/api/rest/',
+            'httpMethod' => HttpClientInterface::METHOD_GET,
+            'apiUri' => 'https://github.com/voronkovich/sberbank-acquiring-client',
         ]);
 
-        $client->execute('testAction');
+        $client->execute('/payment/rest/testAction.do');
     }
 
     public function testThrowsAnExceptionIfABadResponseReturned()
@@ -202,10 +209,11 @@ class ClientTest extends TestCase
         $client->execute('testAction');
     }
 
-    public function testThrowsAnExceptionIfAServerSetAnErrorCode()
+    /**
+     * @dataProvider provideErredResponses
+     */
+    public function testThrowsAnExceptionIfAServerSetAnErrorCode(array $response)
     {
-        $response = [200, \json_encode(['errorCode' => 100, 'errorMessage' => 'Error!'])];
-
         $httpClient = $this->mockHttpClient($response);
 
         $client = new Client([
@@ -220,13 +228,24 @@ class ClientTest extends TestCase
         $client->execute('testAction');
     }
 
+    public function provideErredResponses(): iterable
+    {
+        yield [[200, \json_encode(['errorCode' => 100, 'errorMessage' => 'Error!'])]];
+        yield [[200, \json_encode(['ErrorCode' => 100, 'ErrorMessage' => 'Error!'])]];
+        yield [[200, \json_encode(['error' => ['code' => 100, 'message' => 'Error!']])]];
+        yield [[200, \json_encode(['error' => ['code' => 100, 'description' => 'Error!']])]];
+    }
+
     public function testRegistersANewOrder()
     {
-        $client = $this->getClientToTestSendingData([
-            'orderNumber' => 'eee-eee-eee',
-            'amount' => 1200,
-            'returnUrl' => 'https://github.com/voronkovich/sberbank-acquiring-client',
-            'currency' => 330,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/register.do',
+            'currency=330&orderNumber=eee-eee-eee&amount=1200&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->registerOrder('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
@@ -234,11 +253,14 @@ class ClientTest extends TestCase
 
     public function testRegisterANewPreAuthorizedOrder()
     {
-        $client = $this->getClientToTestSendingData([
-            'orderNumber' => 'eee-eee-eee',
-            'amount' => 1200,
-            'returnUrl' => 'https://github.com/voronkovich/sberbank-acquiring-client',
-            'currency' => 330,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/registerPreAuth.do',
+            'currency=330&orderNumber=eee-eee-eee&amount=1200&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->registerOrderPreAuth('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
@@ -264,10 +286,14 @@ class ClientTest extends TestCase
 
     public function testDepositsAPreAuthorizedOrder()
     {
-        $client = $this->getClientToTestSendingData([
-            'orderId' => 'aaa-bbb-yyy',
-            'amount' => 1000,
-            'currency' => 810,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/deposit.do',
+            'currency=810&orderId=aaa-bbb-yyy&amount=1000&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->deposit('aaa-bbb-yyy', 1000, ['currency' => 810]);
@@ -275,9 +301,14 @@ class ClientTest extends TestCase
 
     public function testReversesAnOrder()
     {
-        $client = $this->getClientToTestSendingData([
-            'orderId' => 'aaa-bbb-yyy',
-            'currency' => 480,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/reverse.do',
+            'currency=480&orderId=aaa-bbb-yyy&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->reverseOrder('aaa-bbb-yyy', ['currency' => 480]);
@@ -285,10 +316,14 @@ class ClientTest extends TestCase
 
     public function testRefundsAnOrder()
     {
-        $client = $this->getClientToTestSendingData([
-            'orderId' => 'aaa-bbb-yyy',
-            'amount' => 5050,
-            'currency' => 456,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/refund.do',
+            'currency=456&orderId=aaa-bbb-yyy&amount=5050&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->refundOrder('aaa-bbb-yyy', 5050, ['currency' => 456]);
@@ -296,9 +331,14 @@ class ClientTest extends TestCase
 
     public function testGetsAnOrderStatus()
     {
-        $client = $this->getClientToTestSendingData([
-            'orderId' => 'aaa-bbb-yyy',
-            'currency' => 100,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/rest/getOrderStatusExtended.do',
+            'currency=100&orderId=aaa-bbb-yyy&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->getOrderStatus('aaa-bbb-yyy', ['currency' => 100]);
@@ -306,9 +346,14 @@ class ClientTest extends TestCase
 
     public function testVerifiesACardEnrollment()
     {
-        $client = $this->getClientToTestSendingData([
-            'pan' => 'aaazzz',
-            'currency' => 200,
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/verifyEnrollment.do',
+            'currency=200&pan=aaazzz&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->verifyEnrollment('aaazzz', ['currency' => 200]);
@@ -316,10 +361,14 @@ class ClientTest extends TestCase
 
     public function testPaysAnOrderUsingBinding()
     {
-        $client = $this->getClientToTestSendingData([
-            'mdOrder' => 'xxx-yyy-zzz',
-            'bindingId' => '600',
-            'language' => 'en',
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/paymentOrderBinding.do',
+            'language=en&mdOrder=xxx-yyy-zzz&bindingId=600&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->paymentOrderBinding('xxx-yyy-zzz', '600', ['language' => 'en']);
@@ -327,9 +376,14 @@ class ClientTest extends TestCase
 
     public function testBindsACard()
     {
-        $client = $this->getClientToTestSendingData([
-            'bindingId' => 'bbb000',
-            'language' => 'ru',
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/bindCard.do',
+            'language=ru&bindingId=bbb000&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->bindCard('bbb000', ['language' => 'ru']);
@@ -337,9 +391,14 @@ class ClientTest extends TestCase
 
     public function testUnbindsACard()
     {
-        $client = $this->getClientToTestSendingData([
-            'bindingId' => 'uuu800',
-            'language' => 'en',
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/unBindCard.do',
+            'language=en&bindingId=uuu800&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->unBindCard('uuu800', ['language' => 'en']);
@@ -347,10 +406,14 @@ class ClientTest extends TestCase
 
     public function testExtendsABinding()
     {
-        $client = $this->getClientToTestSendingData([
-            'bindingId' => 'eeeB00',
-            'newExpiry' => '203009',
-            'language' => 'ru',
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/extendBinding.do',
+            'language=ru&bindingId=eeeB00&newExpiry=203009&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->extendBinding('eeeB00', new \DateTime('2030-09'), ['language' => 'ru']);
@@ -358,12 +421,90 @@ class ClientTest extends TestCase
 
     public function testGetsBindings()
     {
-        $client = $this->getClientToTestSendingData([
-            'clientId' => 'clientIDABC',
-            'language' => 'ru',
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/getBindings.do',
+            'language=ru&clientId=clientIDABC&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
         ]);
 
         $client->getBindings('clientIDABC', ['language' => 'ru']);
+    }
+
+    /**
+     * @testdox Pays with an "Apple Pay"
+     */
+    public function testPaysWithAnApplePay()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/applepay/payment.do',
+            '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->payWithApplePay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
+    }
+
+    /**
+     * @testdox Pays with a "Google Pay"
+     */
+    public function testPaysWithAGooglePay()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/google/payment.do',
+            '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->payWithGooglePay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
+    }
+
+    /**
+     * @testdox Pays with a "Samsung Pay"
+     */
+    public function testPaysWithASamsungPay()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/samsung/payment.do',
+            '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->payWithSamsungPay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
+    }
+
+    public function testAddsASpecialPrefixToActionForBackwardCompatibility()
+    {
+        $httpClient = $this->mockHttpClient();
+
+        $httpClient
+            ->expects($this->atLeastOnce())
+            ->method('request')
+            ->with($this->equalTo(Client::API_URI.'/payment/rest/getOrderStatusExtended.do'))
+        ;
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'apiUri' => Client::API_URI,
+        ]);
+
+        $client->execute('getOrderStatusExtended.do');
     }
 
     private function mockHttpClient(array $response = null)
@@ -382,25 +523,16 @@ class ClientTest extends TestCase
         return $httpClient;
     }
 
-    private function getClientToTestSendingData($data)
+    private function getHttpClientToTestSendingData(string $uri, string $data)
     {
         $httpClient = $this->mockHttpClient();
-
-        $data['userName'] = 'oleg';
-        $data['password'] = 'qwerty123';
 
         $httpClient
             ->expects($this->once())
             ->method('request')
-            ->with($this->anything(), $this->anything(), $this->anything(), $this->equalTo($data))
+            ->with($this->stringEndsWith($uri), $this->anything(), $this->anything(), $this->equalTo($data))
         ;
 
-        $client = new Client([
-            'userName' => 'oleg',
-            'password' => 'qwerty123',
-            'httpClient' => $httpClient
-        ]);
-
-        return $client;
+        return $httpClient;
     }
 }

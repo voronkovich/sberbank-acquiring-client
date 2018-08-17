@@ -93,13 +93,13 @@ $client = new Client(
 
 You can interact with the Sberbank REST API using a low level method `execute`:
 ```php
-$client->execute('register.do', [ 
+$client->execute('/payment/rest/register.do', [ 
     'orderNumber' => 1111,
     'amount' => 10,
     'returnUrl' => 'http://localhost/sberbank/success',
 ]);
 
-$status = $client->execute('getOrderStatusExtended.do', [
+$status = $client->execute('/payment/rest/getOrderStatusExtended.do', [
     'orderId' => '64fc8831-a2b0-721b-64fc-883100001553',
 ]);
 ```
@@ -107,7 +107,7 @@ But it's more convenient to use one of the shortcuts listed below.
 
 ### Creating a new order
 
-[register.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:register)
+[/payment/rest/register.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:register)
 
 ```php
 <?php
@@ -147,7 +147,7 @@ Use a `registerOrderPreAuth` method to create a 2-step order.
 
 ### Getting a status of an exising order
 
-[getOrderStatusExtended.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended)
+[/payment/rest/getOrderStatusExtended.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended)
 
 ```php
 <?php
@@ -170,7 +170,7 @@ if (OrderStatus::isDeclined($result['orderStatus'])) {
 
 ### Reversing an exising order
 
-[reverse.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:reverse)
+[/payment/rest/reverse.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:reverse)
 
 ```php
 <?php
@@ -184,7 +184,7 @@ $result = $client->reverseOrder($orderId);
 
 ### Refunding an exising order
 
-[refund.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:refund)
+[/payment/rest/refund.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:refund)
 
 ```php
 <?php
@@ -194,6 +194,60 @@ use Voronkovich\SberbankAcquiring\Client;
 $client = new Client(['userName' => 'username', 'password' => 'password']);
 
 $result = $client->refundOrder($orderId, $amountToRefund);
+```
+
+### Apple Pay
+
+[/payment/applepay/payment.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_applepay)
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+$client = new Client(['userName' => 'username', 'password' => 'password']);
+
+$orderNumber = 777;
+$merchant = 'my_merchant';
+$paymentToken = 'token';
+
+$result = $client->payWithApplePay($orderNumber, $merchant, $paymentToken);
+```
+
+### Google Pay
+
+[/payment/google/payment.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_googlepay)
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+$client = new Client(['userName' => 'username', 'password' => 'password']);
+
+$orderNumber = 777;
+$merchant = 'my_merchant';
+$paymentToken = 'token';
+
+$result = $client->payWithGooglePay($orderNumber, $merchant, $paymentToken);
+```
+
+### Samsung Pay
+
+[/payment/samsung/payment.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_samsungpay)
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+$client = new Client(['userName' => 'username', 'password' => 'password']);
+
+$orderNumber = 777;
+$merchant = 'my_merchant';
+$paymentToken = 'token';
+
+$result = $client->payWithSamsungPay($orderNumber, $merchant, $paymentToken);
 ```
 
 ---

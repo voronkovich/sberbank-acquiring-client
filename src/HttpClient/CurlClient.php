@@ -45,10 +45,8 @@ class CurlClient implements HttpClientInterface
         return $this->curl;
     }
 
-    public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], array $data = []): array
+    public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], string $data = ''): array
     {
-        $data = \http_build_query($data, '', '&');
-
         if (HttpClientInterface::METHOD_GET === $method) {
             $curlOptions[\CURLOPT_HTTPGET] = true;
             $curlOptions[\CURLOPT_URL] = $uri . '?' . $data;
@@ -67,7 +65,10 @@ class CurlClient implements HttpClientInterface
             );
         }
 
-        $curlOptions[\CURLOPT_HTTPHEADER] = $headers;
+        foreach ($headers as $key => $value) {
+            $curlOptions[\CURLOPT_HTTPHEADER][] = "$key: $value";
+        }
+
         $curlOptions[\CURLOPT_RETURNTRANSFER] = true;
 
         $curl = $this->getCurl();

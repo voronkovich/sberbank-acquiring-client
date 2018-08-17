@@ -22,7 +22,7 @@ class GuzzleAdapter implements HttpClientInterface
         $this->client = $client;
     }
 
-    public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], array $data = []): array
+    public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], string $data = ''): array
     {
         $guzzleVersion = (int) $this->client::VERSION;
 
@@ -33,7 +33,7 @@ class GuzzleAdapter implements HttpClientInterface
                 $options['query'] = $data;
                 break;
             case HttpClientInterface::METHOD_POST:
-                $options[6 > $guzzleVersion ? 'body' : 'form_params'] = $data;
+                $options['body'] = $data;
                 break;
             default:
                 throw new \InvalidArgumentException(

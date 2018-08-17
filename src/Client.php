@@ -22,8 +22,8 @@ class Client
 {
     const ACTION_SUCCESS = 0;
 
-    const API_URI      = 'https://securepayments.sberbank.ru/payment/rest/';
-    const API_URI_TEST = 'https://3dsec.sberbank.ru/payment/rest/';
+    const API_URI      = 'https://securepayments.sberbank.ru';
+    const API_URI_TEST = 'https://3dsec.sberbank.ru';
 
     /**
      * @var string
@@ -161,7 +161,7 @@ class Client
      */
     public function registerOrder($orderId, int $amount, string $returnUrl, array $data = []): array
     {
-        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'register.do');
+        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, '/payment/rest/register.do');
     }
 
     /**
@@ -178,7 +178,7 @@ class Client
      */
     public function registerOrderPreAuth($orderId, int $amount, string $returnUrl, array $data = []): array
     {
-        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, 'registerPreAuth.do');
+        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, '/payment/rest/registerPreAuth.do');
     }
 
     private function doRegisterOrder($orderId, int $amount, string $returnUrl, array $data = [], $method = 'register.do'): array
@@ -218,7 +218,7 @@ class Client
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
 
-        return $this->execute('deposit.do', $data);
+        return $this->execute('/payment/rest/deposit.do', $data);
     }
 
     /**
@@ -235,7 +235,7 @@ class Client
     {
         $data['orderId'] = $orderId;
 
-        return $this->execute('reverse.do', $data);
+        return $this->execute('/payment/rest/reverse.do', $data);
     }
 
     /**
@@ -254,7 +254,7 @@ class Client
         $data['orderId'] = $orderId;
         $data['amount']  = $amount;
 
-        return $this->execute('refund.do', $data);
+        return $this->execute('/payment/rest/refund.do', $data);
     }
 
     /**
@@ -271,7 +271,7 @@ class Client
     {
         $data['orderId'] = $orderId;
 
-        return $this->execute('getOrderStatusExtended.do', $data);
+        return $this->execute('/payment/rest/getOrderStatusExtended.do', $data);
     }
 
     /**
@@ -288,7 +288,7 @@ class Client
     {
         $data['pan'] = $pan;
 
-        return $this->execute('verifyEnrollment.do', $data);
+        return $this->execute('/payment/rest/verifyEnrollment.do', $data);
     }
 
     /**
@@ -350,7 +350,7 @@ class Client
         $data['transactionStates'] = implode(array_unique($data['transactionStates']), ',');
         $data['merchants']         = implode(array_unique($data['merchants']), ',');
 
-        return $this->execute('getLastOrdersForMerchants.do', $data);
+        return $this->execute('/payment/rest/getLastOrdersForMerchants.do', $data);
     }
 
     /**
@@ -369,7 +369,7 @@ class Client
         $data['mdOrder']   = $orderId;
         $data['bindingId'] = $bindingId;
 
-        return $this->execute('paymentOrderBinding.do', $data);
+        return $this->execute('/payment/rest/paymentOrderBinding.do', $data);
     }
 
     /**
@@ -386,7 +386,7 @@ class Client
     {
         $data['bindingId'] = $bindingId;
 
-        return $this->execute('bindCard.do', $data);
+        return $this->execute('/payment/rest/bindCard.do', $data);
     }
 
     /**
@@ -403,7 +403,7 @@ class Client
     {
         $data['bindingId'] = $bindingId;
 
-        return $this->execute('unBindCard.do', $data);
+        return $this->execute('/payment/rest/unBindCard.do', $data);
     }
 
     /**
@@ -422,7 +422,7 @@ class Client
         $data['bindingId'] = $bindingId;
         $data['newExpiry'] = $newExpiry->format('Ym');
 
-        return $this->execute('extendBinding.do', $data);
+        return $this->execute('/payment/rest/extendBinding.do', $data);
     }
 
     /**
@@ -439,7 +439,70 @@ class Client
     {
         $data['clientId'] = $clientId;
 
-        return $this->execute('getBindings.do', $data);
+        return $this->execute('/payment/rest/getBindings.do', $data);
+    }
+
+    /**
+     * Pay with Apple Pay.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_applepay
+     *
+     * @param int|string $orderNumber  Order identifier
+     * @param string     $merchant     Merchant
+     * @param string     $paymentToken Payment token
+     * @param array      $data         Additional data
+     *
+     * @return array A server's response
+     */
+    public function payWithApplePay($orderNumber, string $merchant, string $paymentToken, array $data = []): array
+    {
+        $data['orderNumber'] = $orderNumber;
+        $data['merchant'] = $merchant;
+        $data['paymentToken'] = $paymentToken;
+
+        return $this->execute('/payment/applepay/payment.do', $data);
+    }
+
+    /**
+     * Pay with Google Pay.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_googlepay
+     *
+     * @param int|string $orderNumber  Order identifier
+     * @param string     $merchant     Merchant
+     * @param string     $paymentToken Payment token
+     * @param array      $data         Additional data
+     *
+     * @return array A server's response
+     */
+    public function payWithGooglePay($orderNumber, string $merchant, string $paymentToken, array $data = []): array
+    {
+        $data['orderNumber'] = $orderNumber;
+        $data['merchant'] = $merchant;
+        $data['paymentToken'] = $paymentToken;
+
+        return $this->execute('/payment/google/payment.do', $data);
+    }
+
+    /**
+     * Pay with Samsung Pay.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_samsungpay
+     *
+     * @param int|string $orderNumber  Order identifier
+     * @param string     $merchant     Merchant
+     * @param string     $paymentToken Payment token
+     * @param array      $data         Additional data
+     *
+     * @return array A server's response
+     */
+    public function payWithSamsungPay($orderNumber, string $merchant, string $paymentToken, array $data = []): array
+    {
+        $data['orderNumber'] = $orderNumber;
+        $data['merchant'] = $merchant;
+        $data['paymentToken'] = $paymentToken;
+
+        return $this->execute('/payment/samsung/payment.do', $data);
     }
 
     /**
@@ -454,26 +517,40 @@ class Client
      */
     public function execute(string $action, array $data = []): array
     {
-        $uri = $this->apiUri . $action;
-
-        $headers = [
-            'Cache-Control: no-cache',
-        ];
-
-        if (null !== $this->token) {
-            $data['token'] = $this->token;
-        } else {
-            $data['userName'] = $this->userName;
-            $data['password'] = $this->password;
+        // Add '/payment/rest/' prefix for BC compatibility if needed
+        if ($action[0] !== '/') {
+            $action = '/payment/rest/' . $action;
         }
+
+        $rest = 0 === \strpos($action, '/payment/rest/');
+
+        $uri = $this->apiUri . $action;
 
         if (!isset($data['language']) && null !== $this->language) {
             $data['language'] = $this->language;
         }
 
+        $headers['Cache-Control'] = 'no-cache';
+        $method = $this->httpMethod;
+
+        if ($rest) {
+            if (null !== $this->token) {
+                $data['token'] = $this->token;
+            } else {
+                $data['userName'] = $this->userName;
+                $data['password'] = $this->password;
+            }
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            $data = \http_build_query($data, '', '&');
+        } else {
+            $headers['Content-Type'] = 'application/json';
+            $data = \json_encode($data);
+            $method = HttpClientInterface::METHOD_POST;
+        }
+
         $httpClient = $this->getHttpClient();
 
-        list($httpCode, $response) = $httpClient->request($uri, $this->httpMethod, $headers, $data);
+        list($httpCode, $response) = $httpClient->request($uri, $method, $headers, $data);
 
         if (200 !== $httpCode) {
             $badResponseException = new BadResponseException(sprintf('Bad HTTP code: %d.', $httpCode), $httpCode);
@@ -523,6 +600,8 @@ class Client
             $errorCode = (int) $response['errorCode'];
         } elseif (isset($response['ErrorCode'])) {
             $errorCode = (int) $response['ErrorCode'];
+        } elseif (isset($response['error']['code'])) {
+            $errorCode = (int) $response['error']['code'];
         } else {
             $errorCode = self::ACTION_SUCCESS;
         }
@@ -534,12 +613,18 @@ class Client
             $errorMessage = $response['errorMessage'];
         } elseif (isset($response['ErrorMessage'])) {
             $errorMessage = $response['ErrorMessage'];
+        } elseif (isset($response['error']['message'])) {
+            $errorMessage = $response['error']['message'];
+        } elseif (isset($response['error']['description'])) {
+            $errorMessage = $response['error']['description'];
         } else {
             $errorMessage = 'Unknown error.';
         }
 
         unset($response['errorMessage']);
         unset($response['ErrorMessage']);
+        unset($response['error']);
+        unset($response['success']);
 
         if (self::ACTION_SUCCESS !== $errorCode) {
             throw new ActionException($errorMessage, $errorCode);

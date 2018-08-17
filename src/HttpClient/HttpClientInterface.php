@@ -23,5 +23,5 @@ interface HttpClientInterface
      *
      * @return array A response
      */
-    public function request(string $uri, string $method = self::METHOD_GET, array $headers = [], array $data = []): array;
+    public function request(string $uri, string $method = self::METHOD_GET, array $headers = [], string $data = ''): array;
 }

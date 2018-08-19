@@ -443,6 +443,20 @@ class Client
     }
 
     /**
+     * Get a receipt status.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getreceiptstatus
+     *
+     * @param array $data A data
+     *
+     * @return array A server's response
+     */
+    public function getReceiptStatus(array $data): array
+    {
+        return $this->execute('/payment/rest/getReceiptStatus.do', $data);
+    }
+
+    /**
      * Pay with Apple Pay.
      *
      * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_applepay

@@ -434,6 +434,21 @@ class ClientTest extends TestCase
         $client->getBindings('clientIDABC', ['language' => 'ru']);
     }
 
+    public function testGetsARepceiptStatus()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/getReceiptStatus.do',
+            'uuid=ffff&language=ru&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->getReceiptStatus(['uuid' => 'ffff', 'language' => 'ru']);
+    }
+
     /**
      * @testdox Pays with an "Apple Pay"
      */

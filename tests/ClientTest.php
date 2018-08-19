@@ -359,6 +359,24 @@ class ClientTest extends TestCase
         $client->verifyEnrollment('aaazzz', ['currency' => 200]);
     }
 
+    /**
+     * @testdox Updates an SSL card list
+     */
+    public function testUpdatesAnSSLCardList()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/updateSSLCardList.do',
+            'mdorder=aaazzz&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->updateSSLCardList('aaazzz');
+    }
+
     public function testPaysAnOrderUsingBinding()
     {
         $httpClient = $this->getHttpClientToTestSendingData(

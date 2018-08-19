@@ -292,6 +292,23 @@ class Client
     }
 
     /**
+     * Update an SSL card list.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:updateSSLCardList
+     *
+     * @param int|string $orderId An order identifier
+     * @param array      $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function updateSSLCardList($orderId, array $data = []): array
+    {
+        $data['mdorder'] = $orderId;
+
+        return $this->execute('/payment/rest/updateSSLCardList.do', $data);
+    }
+
+    /**
      * Get last orders for merchants.
      *
      * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getLastOrdersForMerchants

@@ -198,6 +198,14 @@ class Client
 
             $data['jsonParams'] = json_encode($data['jsonParams']);
         }
+        
+        if (isset($data['orderBundle'])) {
+            if (!is_array($data['orderBundle'])) {
+                throw new \InvalidArgumentException('The "orderBundle" parameter must be an array.');
+            }
+
+            $data['orderBundle'] = json_encode($data['orderBundle']);
+        }
 
         return $this->execute($method, $data);
     }

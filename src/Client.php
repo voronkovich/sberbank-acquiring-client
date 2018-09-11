@@ -199,6 +199,10 @@ class Client
             $data['jsonParams'] = json_encode($data['jsonParams']);
         }
 
+        if (isset($data['orderBundle']) && is_array($data['orderBundle'])) {
+            $data['orderBundle'] = \json_encode($data['orderBundle']);
+        }
+
         return $this->execute($method, $data);
     }
 

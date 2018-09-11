@@ -284,6 +284,31 @@ class ClientTest extends TestCase
         $client->registerOrderPreAuth(1, 1, 'returnUrl', ['jsonParams' => '{}']);
     }
 
+    /**
+     * @testdox Encodes to JSON an "orderBundle" parameter.
+     */
+    public function testEncodesToJSONAnOrderBundleParameter()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/register.do',
+            'orderBundle=%7B%22items%22%3A%5B%22item1%22%2C%22item2%22%5D%7D&orderNumber=1&amount=1&returnUrl=returnUrl&token=abc'
+        );
+
+        $client = new Client([
+            'token' => 'abc',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->registerOrder(1, 1, 'returnUrl', [
+            'orderBundle' => [
+                'items' => [
+                    'item1',
+                    'item2',
+                ],
+            ],
+        ]);
+    }
+
     public function testDepositsAPreAuthorizedOrder()
     {
         $httpClient = $this->getHttpClientToTestSendingData(

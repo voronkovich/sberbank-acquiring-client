@@ -10,7 +10,6 @@ use Voronkovich\SberbankAcquiring\Exception\NetworkException;
 use Voronkovich\SberbankAcquiring\Exception\ResponseParsingException;
 use Voronkovich\SberbankAcquiring\HttpClient\CurlClient;
 use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
-use Voronkovich\SberbankAcquiring\OrderStatus;
 
 /**
  * Client for working with Sberbanks's aquiring REST API.

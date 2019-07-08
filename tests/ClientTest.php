@@ -251,6 +251,22 @@ class ClientTest extends TestCase
         $client->registerOrder('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
     }
 
+    public function testRegistersANewOrderWithCustomOrder()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/other/prefix/register.do',
+            'currency=330&orderNumber=eee-eee-eee&amount=1200&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'prefixDefault'=>'/other/prefix/'
+        ]);
+
+        $client->registerOrder('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
+    }
+
     public function testRegisterANewPreAuthorizedOrder()
     {
         $httpClient = $this->getHttpClientToTestSendingData(
@@ -511,6 +527,25 @@ class ClientTest extends TestCase
     }
 
     /**
+     * @testdox Pays with an "Apple Pay" with custom prefix
+     */
+    public function testPaysWithAnApplePayWithCustomPrefix()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/other/prefix/payment.do',
+            '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'prefixApple'=>'/other/prefix/'
+        ]);
+
+        $client->payWithApplePay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
+    }
+
+    /**
      * @testdox Pays with a "Google Pay"
      */
     public function testPaysWithAGooglePay()
@@ -529,6 +564,25 @@ class ClientTest extends TestCase
     }
 
     /**
+     * @testdox Pays with a "Google Pay" with custom prefix
+     */
+    public function testPaysWithAGooglePayWithCustomPrefix()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/other/prefix/google/payment.do',
+            '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'prefixGoogle'=>'/other/prefix/google/'
+        ]);
+
+        $client->payWithGooglePay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
+    }
+
+    /**
      * @testdox Pays with a "Samsung Pay"
      */
     public function testPaysWithASamsungPay()
@@ -541,6 +595,25 @@ class ClientTest extends TestCase
         $client = new Client([
             'token' => 'abrakadabra',
             'httpClient' => $httpClient,
+        ]);
+
+        $client->payWithSamsungPay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
+    }
+
+    /**
+     * @testdox Pays with a "Samsung Pay" with custom prefix
+     */
+    public function testPaysWithASamsungPayWithCustomPrefix()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/other/prefix/sumsung/payment.do',
+            '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'prefixSamsung' => '/other/prefix/sumsung/',
         ]);
 
         $client->payWithSamsungPay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);

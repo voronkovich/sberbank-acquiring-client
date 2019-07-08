@@ -251,7 +251,7 @@ class ClientTest extends TestCase
         $client->registerOrder('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
     }
 
-    public function testRegistersANewOrderWithCustomOrder()
+    public function testRegistersANewOrderWithCustomPrefix()
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/other/prefix/register.do',

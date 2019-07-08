@@ -1,6 +1,6 @@
 # sberbank-acquiring-client [![Build Status](https://travis-ci.org/voronkovich/sberbank-acquiring-client.svg?branch=master)](https://travis-ci.org/voronkovich/sberbank-acquiring-client)
 
-PHP client for [Sberbank's acquiring](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest) REST API.
+PHP client for [Sberbank](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest) and [Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html) REST API.
 
 ## Requirements
 
@@ -70,6 +70,24 @@ $client = new Client([
     // with this package (for example, when you have'nt
     // a CURL extension installed in your server).
     'httpClient' => new YourCustomHttpClient(),
+]);
+```
+
+Example for Alphabank:
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+$client = new Client([
+    'userName' => 'username',
+    'password' => 'password',
+    'apiUri' => 'https://web.rbsuat.com',
+    'prefixDefault' => '/ab/rest/',
+    'prefixApple' => '/ab/applepay/',
+    'prefixGoogle' => '/ab/google/',
+    'prefixSamsung' => '/ab/samsung/',
 ]);
 ```
 

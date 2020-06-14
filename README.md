@@ -186,6 +186,19 @@ if (OrderStatus::isDeclined($result['orderStatus'])) {
 }
 ```
 
+Also, you can get an order's status by using you own identifier (e.g. assigned by your database):
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\OrderStatus;
+
+$client = new Client(['userName' => 'username', 'password' => 'password']);
+
+$result = $client->getOrderStatusByOwnId($orderId);
+```
+
 ### Reversing an exising order
 
 [/payment/rest/reverse.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:reverse)

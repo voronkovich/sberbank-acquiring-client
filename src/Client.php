@@ -301,11 +301,11 @@ class Client
     }
 
     /**
-     * Get an existing order's status.
+     * Get an existing order's status by Sberbank's gateway identifier.
      *
      * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended
      *
-     * @param int|string $orderId An order identifier
+     * @param int|string $orderId A Sberbank's gateway order identifier
      * @param array      $data    Additional data
      *
      * @return array A server's response
@@ -313,6 +313,23 @@ class Client
     public function getOrderStatus($orderId, array $data = []): array
     {
         $data['orderId'] = $orderId;
+
+        return $this->execute($this->prefixDefault . 'getOrderStatusExtended.do', $data);
+    }
+
+    /**
+     * Get an existing order's status by own identifier.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended
+     *
+     * @param int|string $orderId An own order identifier
+     * @param array      $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function getOrderStatusByOwnId($orderId, array $data = []): array
+    {
+        $data['orderNumber'] = $orderId;
 
         return $this->execute($this->prefixDefault . 'getOrderStatusExtended.do', $data);
     }

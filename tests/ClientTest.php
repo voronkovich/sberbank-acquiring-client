@@ -385,6 +385,21 @@ class ClientTest extends TestCase
         $client->getOrderStatus('aaa-bbb-yyy', ['currency' => 100]);
     }
 
+    public function testGetsAnOrderStatusByOwnId()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/rest/getOrderStatusExtended.do',
+            'currency=100&orderNumber=111&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->getOrderStatusByOwnId(111, ['currency' => 100]);
+    }
+
     public function testVerifiesACardEnrollment()
     {
         $httpClient = $this->getHttpClientToTestSendingData(

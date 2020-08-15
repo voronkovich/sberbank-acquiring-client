@@ -1,21 +1,19 @@
 language: php
 sudo: false
 
+jobs:
+    fast_finish: true
+    include:
+        - php: 7.3
+        - php: 7.4
+        - php: nightly
+    allow_failures:
+        - php: nightly
+
 cache:
     directories:
         - $HOME/.composer
         - $HOME/.phive
-
-matrix:
-    fast_finish: true
-    include:
-        - php: 7.1
-        - php: 7.2
-        - php: nightly
-    allow_failures:
-        # See https://github.com/travis-ci/travis-ci/issues/6339
-        - php: 7.1
-        - php: nightly
 
 before_install:
     - composer self-update

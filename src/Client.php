@@ -424,8 +424,8 @@ class Client
 
         $data['from']              = $from->format($this->dateFormat);
         $data['to']                = $to->format($this->dateFormat);
-        $data['transactionStates'] = implode(array_unique($data['transactionStates']), ',');
-        $data['merchants']         = implode(array_unique($data['merchants']), ',');
+        $data['transactionStates'] = implode(',', array_unique($data['transactionStates']));
+        $data['merchants']         = implode(',', array_unique($data['merchants']));
 
         return $this->execute($this->prefixDefault . 'getLastOrdersForMerchants.do', $data);
     }

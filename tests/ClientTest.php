@@ -282,6 +282,58 @@ class ClientTest extends TestCase
         $client->registerOrderPreAuth('eee-eee-eee', 1200, 'https://github.com/voronkovich/sberbank-acquiring-client', ['currency' => 330]);
     }
 
+    public function testRegistersANewCreditOrder()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/sbercredit/register.do',
+            'currency=643&orderNumber=aaa-aaa-aaa&amount=50000&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=secret'
+        );
+
+        $client = new Client([
+            'token' => 'secret',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->registerCreditOrder('aaa-aaa-aaa', 50000, 'https://github.com/voronkovich/sberbank-acquiring-client', [
+            'currency' => 643
+        ]);
+    }
+
+    public function testRegistersANewCreditOrderWithCustomPrefix()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/custom/credit/register.do',
+            'currency=643&orderNumber=aaa-aaa-aaa&amount=50000&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=secret'
+        );
+
+        $client = new Client([
+            'token' => 'secret',
+            'httpClient' => $httpClient,
+            'prefixCredit'=> '/custom/credit/',
+        ]);
+
+        $client->registerCreditOrder('aaa-aaa-aaa', 50000, 'https://github.com/voronkovich/sberbank-acquiring-client', [
+            'currency' => 643
+        ]);
+    }
+
+    public function testRegistersANewPreAuthorizedCreditOrder()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/sbercredit/registerPreAuth.do',
+            'currency=643&orderNumber=aaa-aaa-aaa&amount=50000&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=secret'
+        );
+
+        $client = new Client([
+            'token' => 'secret',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->registerCreditOrderPreAuth('aaa-aaa-aaa', 50000, 'https://github.com/voronkovich/sberbank-acquiring-client', [
+            'currency' => 643
+        ]);
+    }
+
     /**
      * @testdox Throws an exception if a "jsonParams" is not an array.
      */

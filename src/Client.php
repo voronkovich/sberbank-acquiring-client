@@ -24,6 +24,7 @@ class Client
     const API_URI            = 'https://securepayments.sberbank.ru';
     const API_URI_TEST       = 'https://3dsec.sberbank.ru';
     const API_PREFIX_DEFAULT = '/payment/rest/';
+    const API_PREFIX_CREDIT  = '/sbercredit/';
     const API_PREFIX_APPLE   = '/payment/applepay/';
     const API_PREFIX_GOOGLE  = '/payment/google/';
     const API_PREFIX_SAMSUNG = '/payment/samsung/';
@@ -72,6 +73,13 @@ class Client
      * @var string
      */
     private $prefixDefault;
+
+    /**
+     * Credit API endpoints prefix.
+     *
+     * @var string
+     */
+    private $prefixCredit;
 
     /**
      * Apple Pay endpoint prefix.
@@ -124,6 +132,7 @@ class Client
             'token',
             'userName',
             'prefixDefault',
+            'prefixCredit',
             'prefixApple',
             'prefixGoogle',
             'prefixSamsung',
@@ -158,6 +167,7 @@ class Client
         $this->currency = $options['currency'] ?? null;
         $this->apiUri = $options['apiUri'] ?? self::API_URI;
         $this->prefixDefault = $options['prefixDefault'] ?? self::API_PREFIX_DEFAULT;
+        $this->prefixCredit = $options['prefixCredit'] ?? self::API_PREFIX_CREDIT;
         $this->prefixApple = $options['prefixApple'] ?? self::API_PREFIX_APPLE;
         $this->prefixGoogle = $options['prefixGoogle'] ?? self::API_PREFIX_GOOGLE;
         $this->prefixSamsung = $options['prefixSamsung'] ?? self::API_PREFIX_SAMSUNG;
@@ -218,6 +228,38 @@ class Client
     public function registerOrderPreAuth($orderId, int $amount, string $returnUrl, array $data = []): array
     {
         return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, $this->prefixDefault . 'registerPreAuth.do');
+    }
+
+    /**
+     * Register a new credit order.
+     *
+     * @see https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:register_cart_credit
+     *
+     * @param int|string $orderId   An order identifier
+     * @param int        $amount    An order amount
+     * @param string     $returnUrl An url for redirecting a user after successfull order handling
+     * @param array      $data      Additional data
+     *
+     * @return array A server's response
+     */
+    public function registerCreditOrder($orderId, int $amount, string $returnUrl, array $data = []): array
+    {
+        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, $this->prefixCredit . 'register.do');
+    }
+
+    /**
+     * Register a new credit order using a 2-step payment process.
+     *
+     * @param int|string $orderId   An order identifier
+     * @param int        $amount    An order amount
+     * @param string     $returnUrl An url for redirecting a user after successfull order handling
+     * @param array      $data      Additional data
+     *
+     * @return array A server's response
+     */
+    public function registerCreditOrderPreAuth($orderId, int $amount, string $returnUrl, array $data = []): array
+    {
+        return $this->doRegisterOrder($orderId, $amount, $returnUrl, $data, $this->prefixCredit . 'registerPreAuth.do');
     }
 
     private function doRegisterOrder($orderId, int $amount, string $returnUrl, array $data = [], $method = 'register.do'): array
@@ -613,7 +655,7 @@ class Client
             $action = $this->prefixDefault . $action;
         }
 
-        $rest = 0 === \strpos($action, $this->prefixDefault);
+        $rest = (0 === \strpos($action, $this->prefixDefault)) || (0 === \strpos($action, $this->prefixCredit));
 
         $uri = $this->apiUri . $action;
 

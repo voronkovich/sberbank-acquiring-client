@@ -6,6 +6,7 @@ jobs:
     include:
         - php: 7.3
         - php: 7.4
+        - php: 8.0
         - php: nightly
     allow_failures:
         - php: nightly
@@ -16,10 +17,12 @@ cache:
         - $HOME/.phive
 
 before_install:
+    - sudo apt-get update
+    - sudo apt-get -y install gnupg-curl
     - composer self-update
     - travis_retry wget https://phar.io/releases/phive.phar
     - travis_retry wget https://phar.io/releases/phive.phar.asc
-    - travis_retry gpg --keyserver pool.sks-keyservers.net --recv-keys 0x9D8A98B29B2D5D79
+    - travis_retry gpg --keyserver hkps://keys.openpgp.org --recv-keys 0x6AF725270AB81E04D79442549D8A98B29B2D5D79
     - gpg --verify phive.phar.asc phive.phar
 
 install:

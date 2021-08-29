@@ -240,6 +240,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=330&orderNumber=eee-eee-eee&amount=1200&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=abrakadabra'
         );
 
@@ -255,6 +257,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/other/prefix/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=330&orderNumber=eee-eee-eee&amount=1200&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=abrakadabra'
         );
 
@@ -271,6 +275,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/registerPreAuth.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=330&orderNumber=eee-eee-eee&amount=1200&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=abrakadabra'
         );
 
@@ -286,6 +292,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/sbercredit/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=643&orderNumber=aaa-aaa-aaa&amount=50000&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=secret'
         );
 
@@ -303,6 +311,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/custom/credit/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=643&orderNumber=aaa-aaa-aaa&amount=50000&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=secret'
         );
 
@@ -321,6 +331,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/sbercredit/registerPreAuth.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=643&orderNumber=aaa-aaa-aaa&amount=50000&returnUrl=https%3A%2F%2Fgithub.com%2Fvoronkovich%2Fsberbank-acquiring-client&token=secret'
         );
 
@@ -359,6 +371,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'orderBundle=%7B%22items%22%3A%5B%22item1%22%2C%22item2%22%5D%7D&orderNumber=1&amount=1&returnUrl=returnUrl&token=abc'
         );
 
@@ -381,6 +395,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/deposit.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=810&orderId=aaa-bbb-yyy&amount=1000&token=abrakadabra'
         );
 
@@ -396,6 +412,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/reverse.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=480&orderId=aaa-bbb-yyy&token=abrakadabra'
         );
 
@@ -411,6 +429,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/refund.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=456&orderId=aaa-bbb-yyy&amount=5050&token=abrakadabra'
         );
 
@@ -426,6 +446,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/rest/getOrderStatusExtended.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=100&orderId=aaa-bbb-yyy&token=abrakadabra'
         );
 
@@ -441,6 +463,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/rest/getOrderStatusExtended.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=100&orderNumber=111&token=abrakadabra'
         );
 
@@ -456,6 +480,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/verifyEnrollment.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'currency=200&pan=aaazzz&token=abrakadabra'
         );
 
@@ -474,6 +500,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/updateSSLCardList.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'mdorder=aaazzz&token=abrakadabra'
         );
 
@@ -489,6 +517,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/paymentOrderBinding.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'language=en&mdOrder=xxx-yyy-zzz&bindingId=600&token=abrakadabra'
         );
 
@@ -504,6 +534,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/bindCard.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'language=ru&bindingId=bbb000&token=abrakadabra'
         );
 
@@ -519,6 +551,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/unBindCard.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'language=en&bindingId=uuu800&token=abrakadabra'
         );
 
@@ -534,6 +568,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/extendBinding.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'language=ru&bindingId=eeeB00&newExpiry=203009&token=abrakadabra'
         );
 
@@ -549,6 +585,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/getBindings.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'language=ru&clientId=clientIDABC&token=abrakadabra'
         );
 
@@ -564,6 +602,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/getReceiptStatus.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
             'uuid=ffff&language=ru&token=abrakadabra'
         );
 
@@ -582,6 +622,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/applepay/payment.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
             '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
         );
 
@@ -600,6 +642,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/other/prefix/payment.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
             '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
         );
 
@@ -619,6 +663,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/google/payment.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
             '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
         );
 
@@ -637,6 +683,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/other/prefix/google/payment.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
             '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
         );
 
@@ -656,6 +704,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/samsung/payment.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
             '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
         );
 
@@ -674,6 +724,8 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/other/prefix/sumsung/payment.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
             '{"language":"en","orderNumber":"eee-eee","merchant":"my_merchant","paymentToken":"token_zzz"}'
         );
 
@@ -721,14 +773,19 @@ class ClientTest extends TestCase
         return $httpClient;
     }
 
-    private function getHttpClientToTestSendingData(string $uri, string $data)
+    private function getHttpClientToTestSendingData(string $uri, string $method, array $headers = [], string $data = '')
     {
         $httpClient = $this->mockHttpClient();
 
         $httpClient
             ->expects($this->once())
             ->method('request')
-            ->with($this->stringEndsWith($uri), $this->anything(), $this->anything(), $this->equalTo($data))
+            ->with(
+                $this->stringEndsWith($uri),
+                $this->equalTo($method),
+                $this->equalTo($headers),
+                $this->equalTo($data)
+            )
         ;
 
         return $httpClient;

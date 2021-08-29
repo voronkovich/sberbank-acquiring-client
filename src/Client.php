@@ -663,7 +663,7 @@ class Client
             $data['language'] = $this->language;
         }
 
-        $headers['Cache-Control'] = 'no-cache';
+        $headers['Cache-Control'] = 'no-store, max-age=0';
         $method = $this->httpMethod;
 
         if ($rest) {

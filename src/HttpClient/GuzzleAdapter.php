@@ -16,16 +16,23 @@ use Psr\Http\Message\ResponseInterface;
 class GuzzleAdapter implements HttpClientInterface
 {
     private $client;
+    private $version;
 
     public function __construct(ClientInterface $client)
     {
         $this->client = $client;
+
+        $class = \get_class($client);
+
+        if (\defined($class.'::MAJOR_VERSION')) {
+            $this->version = (int) $client::MAJOR_VERSION;
+        } elseif (\defined($class.'::VERSION')) {
+            $this->version = (int) $client::VERSION;
+        }
     }
 
     public function request(string $uri, string $method = HttpClientInterface::METHOD_GET, array $headers = [], string $data = ''): array
     {
-        $guzzleVersion = (int) $this->client::VERSION;
-
         $options = ['headers' => $headers];
 
         switch ($method) {
@@ -47,7 +54,7 @@ class GuzzleAdapter implements HttpClientInterface
                 break;
         }
 
-        if (6 > $guzzleVersion) {
+        if (6 > $this->version) {
             $request = $this->client->createRequest($method, $uri, $options);
             $response = $this->client->send($request);
         } else {

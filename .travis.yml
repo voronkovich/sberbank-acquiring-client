@@ -1,5 +1,6 @@
 language: php
-sudo: false
+os: linux
+dist: xenial
 
 jobs:
     fast_finish: true

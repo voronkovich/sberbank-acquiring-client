@@ -667,13 +667,13 @@ class Client
         $method = $this->httpMethod;
 
         if ($rest) {
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             if (null !== $this->token) {
                 $data['token'] = $this->token;
             } else {
                 $data['userName'] = $this->userName;
                 $data['password'] = $this->password;
             }
-            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             $data = \http_build_query($data, '', '&');
         } else {
             $headers['Content-Type'] = 'application/json';

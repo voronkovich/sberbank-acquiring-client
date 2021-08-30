@@ -1,4 +1,9 @@
-# sberbank-acquiring-client [![Build Status](https://app.travis-ci.com/voronkovich/sberbank-acquiring-client.svg?branch=master)](https://app.travis-ci.com/github/voronkovich/sberbank-acquiring-client)
+# sberbank-acquiring-client
+
+[![Build Status](https://app.travis-ci.com/voronkovich/sberbank-acquiring-client.svg?branch=master)](https://app.travis-ci.com/github/voronkovich/sberbank-acquiring-client)
+[![Latest Stable Version](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/v/stable)](https://packagist.org/packages/voronkovich/sberbank-acquiring-client)
+[![Total Downloads](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/downloads)](https://packagist.org/packages/voronkovich/sberbank-acquiring-client)
+[![License](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/license)](https://packagist.org/packages/voronkovich/sberbank-acquiring-client)
 
 PHP client for [Sberbank](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest) and [Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html) REST API.
 

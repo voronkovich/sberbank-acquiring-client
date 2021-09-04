@@ -112,6 +112,8 @@ $client = new Client(
 ]);
 ```
 
+Also, there are available adapters for [Symfony](https://symfony.com/doc/current/http_client.html) and [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP clents.
+
 ### Low level method "execute"
 
 You can interact with the Sberbank REST API using a low level method `execute`:

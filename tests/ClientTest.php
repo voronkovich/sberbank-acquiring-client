@@ -738,45 +738,45 @@ class ClientTest extends TestCase
         $client->payWithSamsungPay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
     }
 
-    public function testGetDynamicQrThrowsAnExceptionIfPrefixQrOptionIsUnspecified()
+    public function testGetSbpDynamicQrThrowsAnExceptionIfPrefixSbpQrOptionIsUnspecified()
     {
         $client = new Client(['token' => 'abrakadabra']);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "prefixQr" option is unspecified.');
+        $this->expectExceptionMessage('The "prefixSbpQr" option is unspecified.');
 
-        $client->getDynamicQr('xxx-yyy-zzz', 100, 100, 'image');
+        $client->getSbpDynamicQr('xxx-yyy-zzz', ['qrHeight' => 100, 'qrWidth' => 100, 'qrFormat' => 'image']);
     }
 
-    public function testGetsDynamicQrWithCustomPrefix()
+    public function testGetsSbpDynamicQrWithCustomPrefix()
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/sbp/c2b/qr/dynamic/get.do',
             'POST',
             [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
-            'mdOrder=xxx-yyy-zzz&qrHeight=100&qrWidth=100&qrFormat=image&token=abrakadabra'
+            'qrHeight=100&qrWidth=100&qrFormat=image&mdOrder=xxx-yyy-zzz&token=abrakadabra'
         );
 
         $client = new Client([
             'token' => 'abrakadabra',
             'httpClient' => $httpClient,
-            'prefixQr' => '/payment/rest/sbp/c2b/qr/',
+            'prefixSbpQr' => '/payment/rest/sbp/c2b/qr/',
         ]);
 
-        $client->getDynamicQr('xxx-yyy-zzz', 100, 100, 'image');
+        $client->getSbpDynamicQr('xxx-yyy-zzz', ['qrHeight' => 100, 'qrWidth' => 100, 'qrFormat' => 'image']);
     }
 
-    public function testGetQrStatusThrowsAnExceptionIfPrefixQrOptionIsUnspecified()
+    public function testGetSbpQrStatusThrowsAnExceptionIfPrefixSbpQrOptionIsUnspecified()
     {
         $client = new Client(['token' => 'abrakadabra']);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "prefixQr" option is unspecified.');
+        $this->expectExceptionMessage('The "prefixSbpQr" option is unspecified.');
 
-        $client->getQrStatus('xxx-yyy-zzz', 'meh');
+        $client->getSbpQrStatus('xxx-yyy-zzz', 'meh');
     }
 
-    public function testGetsQrStatusWithCustomPrefix()
+    public function testGetsSbpQrStatusWithCustomPrefix()
     {
         $httpClient = $this->getHttpClientToTestSendingData(
             '/payment/rest/sbp/c2b/qr/status.do',
@@ -788,10 +788,10 @@ class ClientTest extends TestCase
         $client = new Client([
             'token' => 'abrakadabra',
             'httpClient' => $httpClient,
-            'prefixQr' => '/payment/rest/sbp/c2b/qr/',
+            'prefixSbpQr' => '/payment/rest/sbp/c2b/qr/',
         ]);
 
-        $client->getQrStatus('xxx-yyy-zzz', 'meh');
+        $client->getSbpQrStatus('xxx-yyy-zzz', 'meh');
     }
 
     public function testAddsASpecialPrefixToActionForBackwardCompatibility()

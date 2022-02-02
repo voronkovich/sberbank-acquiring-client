@@ -107,7 +107,7 @@ class Client
      *
      * @var string
      */
-    private $prefixQr;
+    private $prefixSbpQr;
 
     /**
      * An HTTP method.
@@ -143,7 +143,7 @@ class Client
             'prefixApple',
             'prefixGoogle',
             'prefixSamsung',
-            'prefixQr',
+            'prefixSbpQr',
         ];
 
         $unknownOptions = \array_diff(\array_keys($options), $allowedOptions);
@@ -179,7 +179,7 @@ class Client
         $this->prefixApple = $options['prefixApple'] ?? self::API_PREFIX_APPLE;
         $this->prefixGoogle = $options['prefixGoogle'] ?? self::API_PREFIX_GOOGLE;
         $this->prefixSamsung = $options['prefixSamsung'] ?? self::API_PREFIX_SAMSUNG;
-        $this->prefixQr = $options['prefixQr'] ?? null;
+        $this->prefixSbpQr = $options['prefixSbpQr'] ?? null;
 
         if (isset($options['httpMethod'])) {
             if (!\in_array($options['httpMethod'], [ HttpClientInterface::METHOD_GET, HttpClientInterface::METHOD_POST ])) {
@@ -650,26 +650,20 @@ class Client
     /**
      * Get QR code for payment through SBP.
      *
-     * @param int|string  $orderId  An order identifier
-     * @param int|null    $qrHeight A QR code height
-     * @param int|null    $qrWidth  A QR code width
-     * @param string|null $qrFormat A QR code format
-     * @param array       $data     Additional data
+     * @param int|string $orderId An order identifier
+     * @param array      $data    Additional data
      *
      * @return array A server's response
      */
-    public function getDynamicQr($orderId, int $qrHeight = null, int $qrWidth = null, string $qrFormat = null, array $data = []): array
+    public function getSbpDynamicQr($orderId, array $data = []): array
     {
-        if (empty($this->prefixQr)) {
-            throw new \RuntimeException('The "prefixQr" option is unspecified.');
+        if (empty($this->prefixSbpQr)) {
+            throw new \RuntimeException('The "prefixSbpQr" option is unspecified.');
         }
 
         $data['mdOrder']  = $orderId;
-        $data['qrHeight'] = $qrHeight;
-        $data['qrWidth']  = $qrWidth;
-        $data['qrFormat'] = $qrFormat;
 
-        return $this->execute($this->prefixQr . 'dynamic/get.do', $data);
+        return $this->execute($this->prefixSbpQr . 'dynamic/get.do', $data);
     }
 
     /**
@@ -681,16 +675,16 @@ class Client
      *
      * @return array A server's response
      */
-    public function getQrStatus($orderId, string $qrId, array $data = []): array
+    public function getSbpQrStatus($orderId, string $qrId, array $data = []): array
     {
-        if (empty($this->prefixQr)) {
-            throw new \RuntimeException('The "prefixQr" option is unspecified.');
+        if (empty($this->prefixSbpQr)) {
+            throw new \RuntimeException('The "prefixSbpQr" option is unspecified.');
         }
 
-        $data['mdOrder']  = $orderId;
-        $data['qrId']     = $qrId;
+        $data['mdOrder'] = $orderId;
+        $data['qrId']    = $qrId;
 
-        return $this->execute($this->prefixQr . 'status.do', $data);
+        return $this->execute($this->prefixSbpQr . 'status.do', $data);
     }
 
     /**

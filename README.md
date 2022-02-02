@@ -288,6 +288,36 @@ $paymentToken = 'token';
 $result = $client->payWithSamsungPay($orderNumber, $merchant, $paymentToken);
 ```
 
+### SBP payments using QR codes
+
+_currently only supported by Alfabank, see [docs](https://pay.alfabank.ru/ecommerce/instructions/SBP_C2B.pdf)._
+
+```php
+<?php
+
+use Voronkovich\SberbankAcquiring\Client;
+
+// Specifying "apiUri" and "prefixSbpQr" is mandatory
+$client = new Client([
+    'apiUri' => 'https://pay.alfabank.ru',
+    'prefixSbpQr' => '/payment/rest/sbp/c2b/qr/',
+    'userName' => 'username',
+    'password' => 'password',
+]);
+
+$result = $client->getSbpDynamicQr($orderId, [
+    'qrHeight' => 100,
+    'qrWidth' => 100,
+    'qrFormat' => 'image',
+]);
+
+echo sprintf(
+    '<a href="%s"><img src="%s" /></a>',
+    $result['payload'],
+    'data:image/png;base64,' . $result['renderedQr']
+);
+```
+
 ---
 See `Client` source code to find methods for payment bindings and dealing with 2-step payments.
 

@@ -738,6 +738,62 @@ class ClientTest extends TestCase
         $client->payWithSamsungPay('eee-eee', 'my_merchant', 'token_zzz', ['language' => 'en']);
     }
 
+    public function testGetDynamicQrThrowsAnExceptionIfPrefixQrOptionIsUnspecified()
+    {
+        $client = new Client(['token' => 'abrakadabra']);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "prefixQr" option is unspecified.');
+
+        $client->getDynamicQr('xxx-yyy-zzz', 100, 100, 'image');
+    }
+
+    public function testGetsDynamicQrWithCustomPrefix()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/sbp/c2b/qr/dynamic/get.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
+            'mdOrder=xxx-yyy-zzz&qrHeight=100&qrWidth=100&qrFormat=image&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'prefixQr' => '/payment/rest/sbp/c2b/qr/',
+        ]);
+
+        $client->getDynamicQr('xxx-yyy-zzz', 100, 100, 'image');
+    }
+
+    public function testGetQrStatusThrowsAnExceptionIfPrefixQrOptionIsUnspecified()
+    {
+        $client = new Client(['token' => 'abrakadabra']);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "prefixQr" option is unspecified.');
+
+        $client->getQrStatus('xxx-yyy-zzz', 'meh');
+    }
+
+    public function testGetsQrStatusWithCustomPrefix()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/sbp/c2b/qr/status.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
+            'mdOrder=xxx-yyy-zzz&qrId=meh&token=abrakadabra'
+        );
+
+        $client = new Client([
+            'token' => 'abrakadabra',
+            'httpClient' => $httpClient,
+            'prefixQr' => '/payment/rest/sbp/c2b/qr/',
+        ]);
+
+        $client->getQrStatus('xxx-yyy-zzz', 'meh');
+    }
+
     public function testAddsASpecialPrefixToActionForBackwardCompatibility()
     {
         $httpClient = $this->mockHttpClient();

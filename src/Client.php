@@ -103,6 +103,13 @@ class Client
     private $prefixSamsung;
 
     /**
+     * SBP QR endpoint prefix.
+     *
+     * @var string
+     */
+    private $prefixQr;
+
+    /**
      * An HTTP method.
      *
      * @var string
@@ -136,6 +143,7 @@ class Client
             'prefixApple',
             'prefixGoogle',
             'prefixSamsung',
+            'prefixQr',
         ];
 
         $unknownOptions = \array_diff(\array_keys($options), $allowedOptions);
@@ -171,6 +179,7 @@ class Client
         $this->prefixApple = $options['prefixApple'] ?? self::API_PREFIX_APPLE;
         $this->prefixGoogle = $options['prefixGoogle'] ?? self::API_PREFIX_GOOGLE;
         $this->prefixSamsung = $options['prefixSamsung'] ?? self::API_PREFIX_SAMSUNG;
+        $this->prefixQr = $options['prefixQr'] ?? null;
 
         if (isset($options['httpMethod'])) {
             if (!\in_array($options['httpMethod'], [ HttpClientInterface::METHOD_GET, HttpClientInterface::METHOD_POST ])) {
@@ -639,10 +648,56 @@ class Client
     }
 
     /**
+     * Get QR code for payment through SBP.
+     *
+     * @param int|string  $orderId  An order identifier
+     * @param int|null    $qrHeight A QR code height
+     * @param int|null    $qrWidth  A QR code width
+     * @param string|null $qrFormat A QR code format
+     * @param array       $data     Additional data
+     *
+     * @return array A server's response
+     */
+    public function getDynamicQr($orderId, int $qrHeight = null, int $qrWidth = null, string $qrFormat = null, array $data = []): array
+    {
+        if (empty($this->prefixQr)) {
+            throw new \RuntimeException('The "prefixQr" option is unspecified.');
+        }
+
+        $data['mdOrder']  = $orderId;
+        $data['qrHeight'] = $qrHeight;
+        $data['qrWidth']  = $qrWidth;
+        $data['qrFormat'] = $qrFormat;
+
+        return $this->execute($this->prefixQr . 'dynamic/get.do', $data);
+    }
+
+    /**
+     * Get QR code status.
+     *
+     * @param int|string $orderId An order identifier
+     * @param string     $qrId    A QR code identifier
+     * @param array      $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function getQrStatus($orderId, string $qrId, array $data = []): array
+    {
+        if (empty($this->prefixQr)) {
+            throw new \RuntimeException('The "prefixQr" option is unspecified.');
+        }
+
+        $data['mdOrder']  = $orderId;
+        $data['qrId']     = $qrId;
+
+        return $this->execute($this->prefixQr . 'status.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'
-     * @param array  $data   An actions's data
+     * @param array  $data   An action's data
      *
      * @throws NetworkException
      *

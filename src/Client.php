@@ -103,6 +103,13 @@ class Client
     private $prefixSamsung;
 
     /**
+     * SBP QR endpoint prefix.
+     *
+     * @var string
+     */
+    private $prefixSbpQr;
+
+    /**
      * An HTTP method.
      *
      * @var string
@@ -136,6 +143,7 @@ class Client
             'prefixApple',
             'prefixGoogle',
             'prefixSamsung',
+            'prefixSbpQr',
         ];
 
         $unknownOptions = \array_diff(\array_keys($options), $allowedOptions);
@@ -171,6 +179,7 @@ class Client
         $this->prefixApple = $options['prefixApple'] ?? self::API_PREFIX_APPLE;
         $this->prefixGoogle = $options['prefixGoogle'] ?? self::API_PREFIX_GOOGLE;
         $this->prefixSamsung = $options['prefixSamsung'] ?? self::API_PREFIX_SAMSUNG;
+        $this->prefixSbpQr = $options['prefixSbpQr'] ?? null;
 
         if (isset($options['httpMethod'])) {
             if (!\in_array($options['httpMethod'], [ HttpClientInterface::METHOD_GET, HttpClientInterface::METHOD_POST ])) {
@@ -639,10 +648,50 @@ class Client
     }
 
     /**
+     * Get QR code for payment through SBP.
+     *
+     * @param int|string $orderId An order identifier
+     * @param array      $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function getSbpDynamicQr($orderId, array $data = []): array
+    {
+        if (empty($this->prefixSbpQr)) {
+            throw new \RuntimeException('The "prefixSbpQr" option is unspecified.');
+        }
+
+        $data['mdOrder']  = $orderId;
+
+        return $this->execute($this->prefixSbpQr . 'dynamic/get.do', $data);
+    }
+
+    /**
+     * Get QR code status.
+     *
+     * @param int|string $orderId An order identifier
+     * @param string     $qrId    A QR code identifier
+     * @param array      $data    Additional data
+     *
+     * @return array A server's response
+     */
+    public function getSbpQrStatus($orderId, string $qrId, array $data = []): array
+    {
+        if (empty($this->prefixSbpQr)) {
+            throw new \RuntimeException('The "prefixSbpQr" option is unspecified.');
+        }
+
+        $data['mdOrder'] = $orderId;
+        $data['qrId']    = $qrId;
+
+        return $this->execute($this->prefixSbpQr . 'status.do', $data);
+    }
+
+    /**
      * Execute an action.
      *
      * @param string $action An action's name e.g. 'register.do'
-     * @param array  $data   An actions's data
+     * @param array  $data   An action's data
      *
      * @throws NetworkException
      *

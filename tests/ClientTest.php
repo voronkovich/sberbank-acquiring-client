@@ -365,6 +365,31 @@ class ClientTest extends TestCase
     }
 
     /**
+     * @testdox Encodes to JSON a "jsonParams" parameter.
+     */
+    public function testEncodesToJSONAJsonParamsParameter()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            '/payment/rest/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded' ],
+            'jsonParams=%7B%22showApplePay%22%3Atrue%2C%22showGooglePay%22%3Atrue%7D&orderNumber=1&amount=1&returnUrl=returnUrl&token=abc'
+        );
+
+        $client = new Client([
+            'token' => 'abc',
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->registerOrder(1, 1, 'returnUrl', [
+            'jsonParams' => [
+                'showApplePay' => true,
+                'showGooglePay' => true,
+            ],
+        ]);
+    }
+
+    /**
      * @testdox Encodes to JSON an "orderBundle" parameter.
      */
     public function testEncodesToJSONAnOrderBundleParameter()

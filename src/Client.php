@@ -123,6 +123,13 @@ class Client
      */
     private $httpClient;
 
+    /**
+    * Use "ecom" protocol.
+    *
+    * @var bool
+    */
+    private $ecom = false;
+
     public function __construct(array $options = [])
     {
         if (!\extension_loaded('json')) {
@@ -132,6 +139,7 @@ class Client
         $allowedOptions = [
             'apiUri',
             'currency',
+            'ecom',
             'httpClient',
             'httpMethod',
             'language',
@@ -203,6 +211,8 @@ class Client
 
             $this->httpClient = $options['httpClient'];
         }
+
+        $this->ecom = $options['ecom'] ?? false;
     }
 
     /**
@@ -288,11 +298,15 @@ class Client
                 throw new \InvalidArgumentException('The "jsonParams" parameter must be an array.');
             }
 
-            $data['jsonParams'] = json_encode($data['jsonParams']);
+            if (!$this->ecom) {
+                $data['jsonParams'] = \json_encode($data['jsonParams']);
+            }
         }
 
-        if (isset($data['orderBundle']) && is_array($data['orderBundle'])) {
-            $data['orderBundle'] = \json_encode($data['orderBundle']);
+        if (isset($data['orderBundle'])) {
+            if (!$this->ecom && is_array($data['orderBundle'])) {
+                $data['orderBundle'] = \json_encode($data['orderBundle']);
+            }
         }
 
         return $this->execute($method, $data);
@@ -716,7 +730,7 @@ class Client
 
         $method = $this->httpMethod;
 
-        if ($rest) {
+        if ($rest && !$this->ecom) {
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             if (null !== $this->token) {
                 $data['token'] = $this->token;

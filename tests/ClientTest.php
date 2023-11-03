@@ -868,6 +868,27 @@ class ClientTest extends TestCase
         ]);
     }
 
+    public function testUsesDifferentUnbindCardEndpointForEcomProtocol()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            'https://ecommerce.sberbank.ru/ecomm/gw/partner/api/v1/unbindCard.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
+            '{"bindingId":"fdbbc879-c171-4cff-b636-ceab16fd6fce"}'
+        );
+
+        $client = new Client([
+            'apiUri' => 'https://ecommerce.sberbank.ru',
+            'prefixDefault' => '/ecomm/gw/partner/api/v1/',
+            'userName' => 'testUserName',
+            'password' => 'testPassword',
+            'ecom' => true,
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->unBindCard('fdbbc879-c171-4cff-b636-ceab16fd6fce');
+    }
+
     private function mockHttpClient(array $response = null)
     {
         $httpClient = $this->createMock(HttpClientInterface::class);

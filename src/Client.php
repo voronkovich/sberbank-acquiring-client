@@ -547,7 +547,7 @@ class Client
     {
         $data['bindingId'] = (string) $bindingId;
 
-        return $this->execute($this->prefixDefault . 'unBindCard.do', $data);
+        return $this->execute($this->prefixDefault . ($this->ecom ? 'unbindCard.do' : 'unBindCard.do'), $data);
     }
 
     /**

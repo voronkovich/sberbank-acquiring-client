@@ -730,14 +730,17 @@ class Client
 
         $method = $this->httpMethod;
 
-        if ($rest && !$this->ecom) {
-            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        if ($rest) {
             if (null !== $this->token) {
                 $data['token'] = $this->token;
             } else {
                 $data['userName'] = $this->userName;
                 $data['password'] = $this->password;
             }
+        }
+
+        if ($rest && !$this->ecom) {
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             $data = \http_build_query($data, '', '&');
         } else {
             $headers['Content-Type'] = 'application/json';

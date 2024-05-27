@@ -845,7 +845,7 @@ class ClientTest extends TestCase
             'https://ecommerce.sberbank.ru/ecomm/gw/partner/api/v1/register.do',
             'POST',
             [ 'Content-Type' => 'application/json' ],
-            '{"currency":"978","jsonParams":{"web2app":true},"orderBundle":{"ffdVersion":"1.2"},"orderNumber":"111111","amount":19900,"returnUrl":"https:\/\/github.com\/voronkovich\/sberbank-acquiring-client"}'
+            '{"currency":"978","jsonParams":{"web2app":true},"orderBundle":{"ffdVersion":"1.2"},"orderNumber":"111111","amount":19900,"returnUrl":"https:\/\/github.com\/voronkovich\/sberbank-acquiring-client","userName":"testUserName","password":"testPassword"}'
         );
 
         $client = new Client([
@@ -874,7 +874,7 @@ class ClientTest extends TestCase
             'https://ecommerce.sberbank.ru/ecomm/gw/partner/api/v1/unbindCard.do',
             'POST',
             [ 'Content-Type' => 'application/json' ],
-            '{"bindingId":"fdbbc879-c171-4cff-b636-ceab16fd6fce"}'
+            '{"bindingId":"fdbbc879-c171-4cff-b636-ceab16fd6fce","userName":"testUserName","password":"testPassword"}'
         );
 
         $client = new Client([

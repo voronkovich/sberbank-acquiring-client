@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/downloads)](https://packagist.org/packages/voronkovich/sberbank-acquiring-client/stats)
 [![License](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/license)](./LICENSE)
 
-PHP client for [Sberbank](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest) and [Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html) REST API.
+PHP client for [Sberbank](https://ecomtest.sberbank.ru/doc) and [Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html) REST API.
 
 ## Requirements
 
@@ -23,34 +23,38 @@ composer require 'voronkovich/sberbank-acquiring-client'
 
 ### Instantiating a client
 
-In most cases to instantiate a client you need to pass your username and password to a constructor:
+In most cases to instantiate a client you need to pass your `username` and `password` to a factory:
 
 ```php
-<?php
+use Voronkovich\SberbankAcquiring\ClientFactory;
 
-use Voronkovich\SberbankAcquiring\Client;
+// Sberbank production environment
+$client = ClientFactory::sberbank(['userName' => 'username', 'password' => 'password']);
 
-$client = new Client(['userName' => 'username', 'password' => 'password']);
+// Sberbank testing environment
+$client = ClientFactory::sberbankTest(['userName' => 'username', 'password' => 'password']);
+
+// Alfabank production environment
+$client = ClientFactory::alfabank(['userName' => 'username', 'password' => 'password']);
+
+// Alfabank testing environment
+$client = ClientFactory::alfabankTest(['userName' => 'username', 'password' => 'password']);
 ```
-Alternatively you can use an authentication token:
+
+Alternatively you can use an authentication `token`:
+
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client(['token' => 'sberbank-token']);
+$client = ClientFactory::sberbank(['token' => 'sberbank-token']);
 ```
 
 More advanced example:
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\ClientFactory;
 use Voronkovich\SberbankAcquiring\Currency;
 use Voronkovich\SberbankAcquiring\HttpClient\HttpClientInterface;
 
-$client = new Client([
+$client = ClientFactory::sberbank([
     'userName' => 'username',
     'password' => 'password',
     // A language code in ISO 639-1 format.
@@ -60,10 +64,6 @@ $client = new Client([
     // A currency code in ISO 4217 format.
     // Use this option to set a currency used by default.
     'currency' => Currency::RUB,
-
-    // An uri to send requests.
-    // Use this option if you want to use the Sberbank's test server.
-    'apiUri' => Client::API_URI_TEST,
 
     // An HTTP method to use in requests.
     // Must be "GET" or "POST" ("POST" is used by default).
@@ -78,34 +78,15 @@ $client = new Client([
 ]);
 ```
 
-Example for Alphabank:
-
-```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client([
-    'userName' => 'username',
-    'password' => 'password',
-    'apiUri' => 'https://web.rbsuat.com',
-    'prefixDefault' => '/ab/rest/',
-    'prefixApple' => '/ab/applepay/',
-    'prefixGoogle' => '/ab/google/',
-    'prefixSamsung' => '/ab/samsung/',
-]);
-```
-
 Also you can use an adapter for the [Guzzle](https://github.com/guzzle/guzzle):
-```php
-<?php
 
-use Voronkovich\SberbankAcquiring\Client;
+```php
+use Voronkovich\SberbankAcquiring\ClientFactory;
 use Voronkovich\SberbankAcquiring\HttpClient\GuzzleAdapter;
 
 use GuzzleHttp\Client as Guzzle;
 
-$client = new Client(
+$client = ClientFactory::sberbank([
     'userName' => 'username',
     'password' => 'password',
     'httpClient' => new GuzzleAdapter(new Guzzle()),
@@ -116,15 +97,16 @@ Also, there are available adapters for [Symfony](https://symfony.com/doc/current
 
 ### Low level method "execute"
 
-You can interact with the Sberbank REST API using a low level method `execute`:
+You can interact with the Gateway REST API using a low level method `execute`:
+
 ```php
-$client->execute('/payment/rest/register.do', [ 
+$client->execute('/ecomm/gw/partner/api/v1/register.do', [ 
     'orderNumber' => 1111,
     'amount' => 10,
     'returnUrl' => 'http://localhost/sberbank/success',
 ]);
 
-$status = $client->execute('/payment/rest/getOrderStatusExtended.do', [
+$status = $client->execute('/ecomm/gw/partner/api/v1/getOrderStatusExtended.do', [
     'orderId' => '64fc8831-a2b0-721b-64fc-883100001553',
 ]);
 ```
@@ -132,15 +114,11 @@ But it's more convenient to use one of the shortcuts listed below.
 
 ### Creating a new order
 
-[/payment/rest/register.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:register)
+[Sberbank](https://ecomtest.sberbank.ru/doc#tag/basicServices/operation/register)
+[Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html#zapros_registratsii_zakaza_rest_)
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\Currency;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
 
 // Required arguments
 $orderId     = 1234;
@@ -172,15 +150,11 @@ Use a `registerOrderPreAuth` method to create a 2-step order.
 
 ### Getting a status of an exising order
 
-[/payment/rest/getOrderStatusExtended.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatusextended)
+[Sberbank](https://ecomtest.sberbank.ru/doc#tag/basicServices/operation/getOrderStatusExtended)
+[Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html#rasshirenniy_zapros_sostojanija_zakaza_rest_)
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
 use Voronkovich\SberbankAcquiring\OrderStatus;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
 
 $result = $client->getOrderStatus($orderId);
 
@@ -196,115 +170,32 @@ if (OrderStatus::isDeclined($result['orderStatus'])) {
 Also, you can get an order's status by using you own identifier (e.g. assigned by your database):
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-use Voronkovich\SberbankAcquiring\OrderStatus;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
-
 $result = $client->getOrderStatusByOwnId($orderId);
 ```
 
 ### Reversing an exising order
 
-[/payment/rest/reverse.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:reverse)
+[Sberbank](https://ecomtest.sberbank.ru/doc#tag/basicServices/operation/reverse)
+[Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html#zapros_otmeni_oplati_zakaza_rest_)
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
-
 $result = $client->reverseOrder($orderId);
 ```
 
 ### Refunding an exising order
 
-[/payment/rest/refund.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:refund)
+[Sberbank](https://ecomtest.sberbank.ru/doc#tag/basicServices/operation/refund)
+[Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html#zapros_vozvrata_sredstv_oplati_zakaza_rest_)
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
-
 $result = $client->refundOrder($orderId, $amountToRefund);
-```
-
-### Apple Pay
-
-[/payment/applepay/payment.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_applepay)
-
-```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
-
-$orderNumber = 777;
-$merchant = 'my_merchant';
-$paymentToken = 'token';
-
-$result = $client->payWithApplePay($orderNumber, $merchant, $paymentToken);
-```
-
-### Google Pay
-
-[/payment/google/payment.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_googlepay)
-
-```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
-
-$orderNumber = 777;
-$merchant = 'my_merchant';
-$paymentToken = 'token';
-
-$result = $client->payWithGooglePay($orderNumber, $merchant, $paymentToken);
-```
-
-### Samsung Pay
-
-[/payment/samsung/payment.do](https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:payment_samsungpay)
-
-```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-$client = new Client(['userName' => 'username', 'password' => 'password']);
-
-$orderNumber = 777;
-$merchant = 'my_merchant';
-$paymentToken = 'token';
-
-$result = $client->payWithSamsungPay($orderNumber, $merchant, $paymentToken);
 ```
 
 ### SBP payments using QR codes
 
-_currently only supported by Alfabank, see [docs](https://pay.alfabank.ru/ecommerce/instructions/SBP_C2B.pdf)._
+_Currently only supported by Alfabank, see [docs](https://pay.alfabank.ru/ecommerce/instructions/SBP_C2B.pdf)._
 
 ```php
-<?php
-
-use Voronkovich\SberbankAcquiring\Client;
-
-// Specifying "apiUri" and "prefixSbpQr" is mandatory
-$client = new Client([
-    'apiUri' => 'https://pay.alfabank.ru',
-    'prefixSbpQr' => '/payment/rest/sbp/c2b/qr/',
-    'userName' => 'username',
-    'password' => 'password',
-]);
-
 $result = $client->getSbpDynamicQr($orderId, [
     'qrHeight' => 100,
     'qrWidth' => 100,

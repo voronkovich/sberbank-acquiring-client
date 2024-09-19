@@ -6,6 +6,7 @@ namespace Voronkovich\SberbankAcquiring\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Voronkovich\SberbankAcquiring\Client;
+use Voronkovich\SberbankAcquiring\Currency;
 use Voronkovich\SberbankAcquiring\Exception\ActionException;
 use Voronkovich\SberbankAcquiring\Exception\BadResponseException;
 use Voronkovich\SberbankAcquiring\Exception\ResponseParsingException;
@@ -836,6 +837,56 @@ class ClientTest extends TestCase
         ]);
 
         $client->execute('getOrderStatusExtended.do');
+    }
+
+    public function testSupportsEcomProtocol()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            'https://ecommerce.sberbank.ru/ecomm/gw/partner/api/v1/register.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
+            '{"currency":"978","jsonParams":{"web2app":true},"orderBundle":{"ffdVersion":"1.2"},"orderNumber":"111111","amount":19900,"returnUrl":"https:\/\/github.com\/voronkovich\/sberbank-acquiring-client","userName":"testUserName","password":"testPassword"}'
+        );
+
+        $client = new Client([
+            'apiUri' => 'https://ecommerce.sberbank.ru',
+            'prefixDefault' => '/ecomm/gw/partner/api/v1/',
+            'userName' => 'testUserName',
+            'password' => 'testPassword',
+            'ecom' => true,
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->registerOrder(111111, 19900, 'https://github.com/voronkovich/sberbank-acquiring-client', [
+            'currency' => Currency::EUR,
+            'jsonParams' => [
+                'web2app' => true,
+            ],
+            'orderBundle' => [
+                'ffdVersion' => '1.2',
+            ],
+        ]);
+    }
+
+    public function testUsesDifferentUnbindCardEndpointForEcomProtocol()
+    {
+        $httpClient = $this->getHttpClientToTestSendingData(
+            'https://ecommerce.sberbank.ru/ecomm/gw/partner/api/v1/unbindCard.do',
+            'POST',
+            [ 'Content-Type' => 'application/json' ],
+            '{"bindingId":"fdbbc879-c171-4cff-b636-ceab16fd6fce","userName":"testUserName","password":"testPassword"}'
+        );
+
+        $client = new Client([
+            'apiUri' => 'https://ecommerce.sberbank.ru',
+            'prefixDefault' => '/ecomm/gw/partner/api/v1/',
+            'userName' => 'testUserName',
+            'password' => 'testPassword',
+            'ecom' => true,
+            'httpClient' => $httpClient,
+        ]);
+
+        $client->unBindCard('fdbbc879-c171-4cff-b636-ceab16fd6fce');
     }
 
     private function mockHttpClient(array $response = null)

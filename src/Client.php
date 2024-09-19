@@ -123,6 +123,13 @@ class Client
      */
     private $httpClient;
 
+    /**
+    * Use "ecom" protocol.
+    *
+    * @var bool
+    */
+    private $ecom = false;
+
     public function __construct(array $options = [])
     {
         if (!\extension_loaded('json')) {
@@ -132,6 +139,7 @@ class Client
         $allowedOptions = [
             'apiUri',
             'currency',
+            'ecom',
             'httpClient',
             'httpMethod',
             'language',
@@ -203,6 +211,8 @@ class Client
 
             $this->httpClient = $options['httpClient'];
         }
+
+        $this->ecom = $options['ecom'] ?? false;
     }
 
     /**
@@ -273,12 +283,14 @@ class Client
 
     private function doRegisterOrder($orderId, int $amount, string $returnUrl, array $data = [], $method = 'register.do'): array
     {
-        $data['orderNumber'] = $orderId;
+        $data['orderNumber'] = (string) $orderId;
         $data['amount']      = $amount;
         $data['returnUrl']   = $returnUrl;
 
-        if (!isset($data['currency']) && null !== $this->currency) {
-            $data['currency'] = $this->currency;
+        if (isset($data['currency'])) {
+            $data['currency'] = (string) $data['currency'];
+        } elseif (null !== $this->currency) {
+            $data['currency'] = (string) $this->currency;
         }
 
         if (isset($data['jsonParams'])) {
@@ -286,11 +298,15 @@ class Client
                 throw new \InvalidArgumentException('The "jsonParams" parameter must be an array.');
             }
 
-            $data['jsonParams'] = json_encode($data['jsonParams']);
+            if (!$this->ecom) {
+                $data['jsonParams'] = \json_encode($data['jsonParams']);
+            }
         }
 
-        if (isset($data['orderBundle']) && is_array($data['orderBundle'])) {
-            $data['orderBundle'] = \json_encode($data['orderBundle']);
+        if (isset($data['orderBundle'])) {
+            if (!$this->ecom && is_array($data['orderBundle'])) {
+                $data['orderBundle'] = \json_encode($data['orderBundle']);
+            }
         }
 
         return $this->execute($method, $data);
@@ -309,7 +325,7 @@ class Client
      */
     public function deposit($orderId, int $amount, array $data = []): array
     {
-        $data['orderId'] = $orderId;
+        $data['orderId'] = (string) $orderId;
         $data['amount']  = $amount;
 
         return $this->execute($this->prefixDefault . 'deposit.do', $data);
@@ -327,7 +343,7 @@ class Client
      */
     public function reverseOrder($orderId, array $data = []): array
     {
-        $data['orderId'] = $orderId;
+        $data['orderId'] = (string) $orderId;
 
         return $this->execute($this->prefixDefault . 'reverse.do', $data);
     }
@@ -345,7 +361,7 @@ class Client
      */
     public function refundOrder($orderId, int $amount, array $data = []): array
     {
-        $data['orderId'] = $orderId;
+        $data['orderId'] = (string) $orderId;
         $data['amount']  = $amount;
 
         return $this->execute($this->prefixDefault . 'refund.do', $data);
@@ -363,7 +379,7 @@ class Client
      */
     public function getOrderStatus($orderId, array $data = []): array
     {
-        $data['orderId'] = $orderId;
+        $data['orderId'] = (string) $orderId;
 
         return $this->execute($this->prefixDefault . 'getOrderStatusExtended.do', $data);
     }
@@ -380,7 +396,7 @@ class Client
      */
     public function getOrderStatusByOwnId($orderId, array $data = []): array
     {
-        $data['orderNumber'] = $orderId;
+        $data['orderNumber'] = (string) $orderId;
 
         return $this->execute($this->prefixDefault . 'getOrderStatusExtended.do', $data);
     }
@@ -414,7 +430,7 @@ class Client
      */
     public function updateSSLCardList($orderId, array $data = []): array
     {
-        $data['mdorder'] = $orderId;
+        $data['mdorder'] = (string) $orderId;
 
         return $this->execute($this->prefixDefault . 'updateSSLCardList.do', $data);
     }
@@ -494,8 +510,8 @@ class Client
      */
     public function paymentOrderBinding($orderId, $bindingId, array $data = []): array
     {
-        $data['mdOrder']   = $orderId;
-        $data['bindingId'] = $bindingId;
+        $data['mdOrder']   = (string) $orderId;
+        $data['bindingId'] = (string) $bindingId;
 
         return $this->execute($this->prefixDefault . 'paymentOrderBinding.do', $data);
     }
@@ -512,7 +528,7 @@ class Client
      */
     public function bindCard($bindingId, array $data = []): array
     {
-        $data['bindingId'] = $bindingId;
+        $data['bindingId'] = (string) $bindingId;
 
         return $this->execute($this->prefixDefault . 'bindCard.do', $data);
     }
@@ -529,9 +545,9 @@ class Client
      */
     public function unBindCard($bindingId, array $data = []): array
     {
-        $data['bindingId'] = $bindingId;
+        $data['bindingId'] = (string) $bindingId;
 
-        return $this->execute($this->prefixDefault . 'unBindCard.do', $data);
+        return $this->execute($this->prefixDefault . ($this->ecom ? 'unbindCard.do' : 'unBindCard.do'), $data);
     }
 
     /**
@@ -547,7 +563,7 @@ class Client
      */
     public function extendBinding($bindingId, \DateTimeInterface $newExpiry, array $data = []): array
     {
-        $data['bindingId'] = $bindingId;
+        $data['bindingId'] = (string) $bindingId;
         $data['newExpiry'] = $newExpiry->format('Ym');
 
         return $this->execute($this->prefixDefault . 'extendBinding.do', $data);
@@ -565,7 +581,7 @@ class Client
      */
     public function getBindings($clientId, array $data = []): array
     {
-        $data['clientId'] = $clientId;
+        $data['clientId'] = (string) $clientId;
 
         return $this->execute($this->prefixDefault . 'getBindings.do', $data);
     }
@@ -598,7 +614,7 @@ class Client
      */
     public function payWithApplePay($orderNumber, string $merchant, string $paymentToken, array $data = []): array
     {
-        $data['orderNumber'] = $orderNumber;
+        $data['orderNumber'] = (string) $orderNumber;
         $data['merchant'] = $merchant;
         $data['paymentToken'] = $paymentToken;
 
@@ -619,7 +635,7 @@ class Client
      */
     public function payWithGooglePay($orderNumber, string $merchant, string $paymentToken, array $data = []): array
     {
-        $data['orderNumber'] = $orderNumber;
+        $data['orderNumber'] = (string) $orderNumber;
         $data['merchant'] = $merchant;
         $data['paymentToken'] = $paymentToken;
 
@@ -640,7 +656,7 @@ class Client
      */
     public function payWithSamsungPay($orderNumber, string $merchant, string $paymentToken, array $data = []): array
     {
-        $data['orderNumber'] = $orderNumber;
+        $data['orderNumber'] = (string) $orderNumber;
         $data['merchant'] = $merchant;
         $data['paymentToken'] = $paymentToken;
 
@@ -661,7 +677,7 @@ class Client
             throw new \RuntimeException('The "prefixSbpQr" option is unspecified.');
         }
 
-        $data['mdOrder']  = $orderId;
+        $data['mdOrder'] = (string) $orderId;
 
         return $this->execute($this->prefixSbpQr . 'dynamic/get.do', $data);
     }
@@ -681,7 +697,7 @@ class Client
             throw new \RuntimeException('The "prefixSbpQr" option is unspecified.');
         }
 
-        $data['mdOrder'] = $orderId;
+        $data['mdOrder'] = (string) $orderId;
         $data['qrId']    = $qrId;
 
         return $this->execute($this->prefixSbpQr . 'status.do', $data);
@@ -715,13 +731,16 @@ class Client
         $method = $this->httpMethod;
 
         if ($rest) {
-            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             if (null !== $this->token) {
                 $data['token'] = $this->token;
             } else {
                 $data['userName'] = $this->userName;
                 $data['password'] = $this->password;
             }
+        }
+
+        if ($rest && !$this->ecom) {
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             $data = \http_build_query($data, '', '&');
         } else {
             $headers['Content-Type'] = 'application/json';

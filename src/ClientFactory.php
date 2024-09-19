@@ -9,7 +9,7 @@ namespace Voronkovich\SberbankAcquiring;
  *
  * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
  */
-final class ClientFactory
+class ClientFactory
 {
     /**
      * Create a client for the Sberbank production environment.

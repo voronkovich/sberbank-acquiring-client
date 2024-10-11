@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/downloads)](https://packagist.org/packages/voronkovich/sberbank-acquiring-client/stats)
 [![License](https://poser.pugx.org/voronkovich/sberbank-acquiring-client/license)](./LICENSE)
 
-PHP client for [Sberbank](https://ecomtest.sberbank.ru/doc) and [Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html) REST API.
+PHP client for [Sberbank](https://ecomtest.sberbank.ru/doc), [Alfabank](https://pay.alfabank.ru/ecommerce/instructions/merchantManual/pages/index/rest.html) and [YooKassa](https://yoomoney.ru/i/forms/yc-program-interface-api-sberbank.pdf) REST APIs.
 
 ## Requirements
 
@@ -39,6 +39,9 @@ $client = ClientFactory::alfabank(['userName' => 'username', 'password' => 'pass
 
 // Alfabank testing environment
 $client = ClientFactory::alfabankTest(['userName' => 'username', 'password' => 'password']);
+
+// YooKassa production environment
+$client = ClientFactory::yookassa(['userName' => 'username', 'password' => 'password']);
 ```
 
 Alternatively you can use an authentication `token`:

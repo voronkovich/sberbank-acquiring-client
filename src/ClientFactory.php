@@ -108,4 +108,26 @@ class ClientFactory
             )
         );
     }
+
+    /**
+     * Create a client for the YooKassa production environment.
+     *
+     * @param array $options Client options (username, password and etc.)
+     *
+     * @see https://yoomoney.ru/i/forms/yc-program-interface-api-sberbank.pdf
+     *
+     * @return Client instance
+     */
+    public static function yookassa(array $options): Client
+    {
+        return new Client(
+            \array_merge(
+                [
+                    'apiUri' => 'https://3dsec-payments.yookassa.ru',
+                    'prefixDefault' => '/payment/rest/',
+                ],
+                $options
+            )
+        );
+    }
 }

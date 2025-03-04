@@ -446,7 +446,7 @@ class Client
      *
      * @return array A server's response
      */
-    public function getLastOrdersForMerchants(\DateTimeInterface $from, \DateTimeInterface $to = null, array $data = []): array
+    public function getLastOrdersForMerchants(\DateTimeInterface $from, ?\DateTimeInterface $to = null, array $data = []): array
     {
         if (null === $to) {
             $to = new \DateTime();

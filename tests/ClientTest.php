@@ -889,7 +889,7 @@ class ClientTest extends TestCase
         $client->unBindCard('fdbbc879-c171-4cff-b636-ceab16fd6fce');
     }
 
-    private function mockHttpClient(array $response = null)
+    private function mockHttpClient(?array $response = null)
     {
         $httpClient = $this->createMock(HttpClientInterface::class);
 
